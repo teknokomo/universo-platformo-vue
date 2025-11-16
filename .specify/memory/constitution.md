@@ -1,15 +1,18 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: Template → 1.0.0 (Initial ratification)
-Modified Principles: All principles defined from template
-Added Sections: All core sections defined
+Version Change: 1.0.0 → 1.1.0 (Added new principles VIII and IX)
+Modified Principles: None
+Added Sections: 
+  - VIII. Security and Error Resilience
+  - IX. Package Lifecycle Management
 Removed Sections: None
 Templates Status:
-  ✅ plan-template.md - Reviewed, constitution check placeholder is compatible
-  ✅ spec-template.md - Reviewed, user story requirements align with principles
-  ✅ tasks-template.md - Reviewed, task structure supports principle-driven development
+  ✅ plan-template.md - Compatible with new principles
+  ✅ spec-template.md - User stories and requirements align with expanded principles
+  ✅ tasks-template.md - Task structure supports principle-driven development
 Follow-up TODOs: None - all placeholders resolved
+Change Rationale: Added comprehensive security and error handling principles, and package lifecycle management principles to address gaps identified in specification review
 -->
 
 # Universo Platformo Vue Constitution
@@ -111,6 +114,38 @@ Use teknokomo/universo-platformo-react as conceptual reference, not direct port.
 
 **Rationale**: The React version provides proven conceptual architecture but contains legacy code. We cherry-pick architectural wisdom while building a clean, best-practice implementation on our stack.
 
+### VIII. Security and Error Resilience
+
+Security MUST be embedded in all layers. Error handling MUST be comprehensive with clear recovery paths.
+
+**Rules**:
+- No secrets in source code; use environment variables for all credentials
+- Dependency vulnerability scanning MUST be enabled and monitored
+- Authentication MUST use secure patterns: HTTPS only, secure session storage, proper password hashing
+- Database access MUST prevent SQL injection through parameterized queries or ORM
+- API endpoints MUST validate all inputs and implement rate limiting
+- Error messages MUST be clear and actionable without exposing sensitive information
+- Package scaffolding MUST validate inputs and provide rollback on failures
+- Documentation MUST provide recovery procedures for all critical failure scenarios
+- Workspace and build failures MUST provide diagnostic information and next steps
+
+**Rationale**: Security vulnerabilities and poor error handling create technical debt and user frustration. Proactive security practices and comprehensive error handling reduce support burden and increase system reliability.
+
+### IX. Package Lifecycle Management
+
+Package creation, evolution, and retirement MUST follow documented procedures.
+
+**Rules**:
+- Package creation MUST use scaffolding script for consistency
+- Package naming MUST follow @universo/{name}-frt/-srv convention
+- Package versioning MUST follow semantic versioning
+- Breaking changes MUST include deprecation warnings and migration guides
+- Package inter-dependencies MUST be declared explicitly in package.json
+- Package removal MUST follow deprecation process before deletion
+- Package size and build time thresholds trigger refactoring reviews
+
+**Rationale**: Clear package lifecycle management prevents chaos as the monorepo scales. Consistent procedures reduce errors and make the system more maintainable.
+
 ## Technology Constraints
 
 ### Frontend Technology
@@ -194,4 +229,4 @@ This constitution supersedes all other development practices and guides. Amendme
 
 **Specification Guidance**: Use `.specify/templates/` and related Spec Kit workflows for feature development guidance.
 
-**Version**: 1.0.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
+**Version**: 1.1.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
