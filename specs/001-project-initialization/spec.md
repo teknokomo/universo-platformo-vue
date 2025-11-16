@@ -5,22 +5,39 @@
 **Status**: Draft  
 **Input**: User description: "Initialize Universo Platformo Vue repository with monorepo structure, Vue/TypeScript frontend, Django/Python backend, PNPM workspace management, base package structure, and bilingual documentation system (English/Russian)"
 
+## Clarifications
+
+### Session 2025-11-16
+
+- Q: When a developer wants to create a new feature package (e.g., "clusters" with clusters-frt and clusters-srv), what is the step-by-step workflow? → A: Script-assisted approach - A CLI tool/script (`pnpm create-package [name]`) scaffolds the directory structure, package.json files, and updates workspace config; developer implements functionality. This provides automation for boilerplate while maintaining flexibility, following modern monorepo best practices rather than the manual approach used in universo-platformo-react.
+
+- Q: How should packages be uniquely identified in the monorepo to prevent naming conflicts and enable future separation into independent repositories? → A: Scoped names with @universo/ namespace (e.g., `@universo/clusters-frt`, `@universo/clusters-srv`). This follows the pattern established in universo-platformo-react, provides namespace isolation, prevents npm registry conflicts, and enables future publishing. The @universo/ scope clearly indicates ownership and aligns with industry-standard monorepo practices used by major projects.
+
+- Q: What are the expected scale limits for the monorepo and when should packages be separated into independent repositories? → A: Based on universo-platformo-react (currently ~35 packages with 9 frontend + 9 backend feature packages), the Vue implementation should comfortably support 50-100 packages. Separation into independent repositories should be considered when: (1) a package needs independent release cycles, (2) package size exceeds 100MB, (3) build times exceed 10 minutes, or (4) external teams need to maintain specific packages independently. Initial implementation focuses on monorepo scalability with future extraction paths documented.
+
+- Q: What are the different developer personas and their specific needs when working with this repository? → A: Three primary personas: (1) **Feature Developers** - implement business logic in Vue/Django, need clear package structure and scaffolding tools; (2) **Platform Maintainers** - manage monorepo infrastructure, need tooling for workspace management and cross-package operations; (3) **Documentation Contributors** - maintain bilingual docs, need clear i18n guidelines and validation tools. Each persona has different entry points and documentation needs that should be reflected in README structure.
+
+- Q: What are the build and workspace operation performance expectations for developer experience? → A: Based on modern monorepo standards and ensuring good DX: (1) `pnpm install` should complete in <60 seconds for clean install, <10 seconds for incremental; (2) Individual package builds should complete in <2 minutes; (3) Full monorepo build should complete in <10 minutes; (4) Hot reload for development should respond in <3 seconds. These targets guide tooling choices (Vite for fast builds, PNPM for efficient installs) and should be monitored as the project scales.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Repository Foundation Setup (Priority: P1)
 
-As a developer joining the Universo Platformo Vue project, I need a properly structured repository with essential documentation and tooling so that I can understand the project structure, contribute effectively, and follow established conventions from the start.
+As a developer joining the Universo Platformo Vue project (whether as Feature Developer, Platform Maintainer, or Documentation Contributor), I need a properly structured repository with persona-specific documentation and tooling so that I can quickly understand my role, find relevant information, and contribute effectively following established conventions.
 
-**Why this priority**: This is the foundation for all future work. Without proper repository structure, documentation, and tooling setup, no development can proceed effectively. This enables immediate onboarding of developers.
+**Why this priority**: This is the foundation for all future work. Without proper repository structure, documentation addressing different personas, and tooling setup, no development can proceed effectively. This enables immediate onboarding of all developer types.
 
-**Independent Test**: Can be fully tested by cloning the repository, reading the documentation files, and verifying that the repository structure follows monorepo conventions with proper tooling configuration.
+**Independent Test**: Can be fully tested by cloning the repository, reading the documentation files for each persona, and verifying that the repository structure follows monorepo conventions with proper tooling configuration.
 
 **Acceptance Scenarios**:
 
-1. **Given** an empty or minimal repository, **When** a developer clones it, **Then** they find comprehensive README files in both English and Russian explaining the project purpose, structure, and getting started instructions
+1. **Given** an empty or minimal repository, **When** a developer clones it, **Then** they find comprehensive README files in both English and Russian explaining the project purpose, structure, getting started instructions, and guidance for each developer persona
 2. **Given** the repository structure, **When** examining the layout, **Then** it follows monorepo patterns with clear package organization and workspace configuration
 3. **Given** the repository, **When** checking for configuration files, **Then** appropriate .gitignore, editor configurations, and linting rules are present
 4. **Given** the documentation, **When** reading README-RU.md, **Then** it contains identical content to README.md translated to Russian with the same number of lines and structure
+5. **Given** the README documentation, **When** a Feature Developer reads it, **Then** they find clear guidance on package structure, scaffolding tools, and feature implementation workflow
+6. **Given** the README documentation, **When** a Platform Maintainer reads it, **Then** they find clear guidance on workspace management, build optimization, and infrastructure maintenance
+7. **Given** the README documentation, **When** a Documentation Contributor reads it, **Then** they find clear guidance on bilingual documentation requirements, translation workflow, and validation tools
 
 ---
 
@@ -41,20 +58,20 @@ As a developer, I need a working monorepo setup with PNPM workspace management s
 
 ---
 
-### User Story 3 - Package Structure Foundation (Priority: P2)
+### User Story 3 - Package Structure Foundation and Scaffolding (Priority: P2)
 
-As a developer, I need a standardized package structure template so that when creating new features, I follow consistent patterns for organizing frontend and backend code with proper base implementations.
+As a developer, I need a package scaffolding CLI tool that automates creation of new feature packages so that I can quickly create properly structured frontend and backend packages following consistent patterns without manual setup errors.
 
-**Why this priority**: Establishes the architectural pattern that all future packages will follow. This ensures consistency and makes the codebase more maintainable as it grows.
+**Why this priority**: Establishes the architectural pattern that all future packages will follow and provides automation to reduce errors. This ensures consistency and makes the codebase more maintainable as it grows. Script-assisted approach is superior to the manual method used in universo-platformo-react.
 
-**Independent Test**: Can be fully tested by examining the package structure template/examples and verifying they follow the documented conventions with separate frontend/backend packages and base directories.
+**Independent Test**: Can be fully tested by running the package scaffolding command (e.g., `pnpm create-package test-feature`) and verifying that it creates properly structured frontend and backend packages with base directories, correct package.json files, and updates workspace configuration.
 
 **Acceptance Scenarios**:
 
-1. **Given** the packages directory, **When** creating a new feature package, **Then** it follows the pattern of separate `-frt` (frontend) and `-srv` (backend) packages
-2. **Given** a package directory, **When** examining its structure, **Then** it contains a `base/` subdirectory for the core implementation
-3. **Given** package documentation, **When** reading package structure guidelines, **Then** clear instructions exist for organizing frontend (Vue/TypeScript) and backend (Django/Python) code
-4. **Given** example packages or templates, **When** reviewing them, **Then** they demonstrate proper separation of concerns and base implementation patterns
+1. **Given** the repository with PNPM workspace, **When** a developer runs `pnpm create-package [feature-name]`, **Then** it creates both `packages/[feature-name]-frt` and `packages/[feature-name]-srv` directories with proper structure
+2. **Given** newly created package directories, **When** examining their structure, **Then** each contains a `base/` subdirectory with boilerplate configuration files (package.json, tsconfig.json for frontend, appropriate Python config for backend)
+3. **Given** the scaffolding script execution, **When** packages are created, **Then** the workspace configuration (pnpm-workspace.yaml) is automatically updated to include the new packages
+4. **Given** the created packages, **When** running `pnpm install`, **Then** the new packages are properly recognized and linked in the workspace
 
 ---
 
@@ -111,13 +128,14 @@ As a contributor, I need a clear documentation system with bilingual support (En
 
 ### Edge Cases
 
-- What happens when a developer tries to add a package that doesn't follow the naming convention (-frt/-srv)?
+- What happens when a developer tries to add a package that doesn't follow the naming convention (-frt/-srv)? → The scaffolding script enforces the naming convention automatically
+- What happens if a developer runs the scaffolding script with a package name that already exists? → The script should detect existing packages and prompt for confirmation or abort to prevent overwriting
 - How does the system handle when Russian documentation becomes out of sync with English documentation?
-- What happens if a developer creates a package without a base/ directory?
+- What happens if a developer creates a package without a base/ directory? → The scaffolding script creates base/ directory automatically; manual package creation is discouraged
 - How does the repository handle dependencies that conflict between frontend and backend packages?
 - What happens when trying to use a database other than Supabase for the first time?
 - How does the system handle when an issue is created without the Russian translation spoiler?
-- What happens if package names conflict with existing JavaScript/Python package names?
+- What happens if package names conflict with existing JavaScript/Python package names? → Package naming with @universo/ scope reduces collision risk; documentation should warn about reserved names
 
 ## Requirements *(mandatory)*
 
@@ -126,7 +144,7 @@ As a contributor, I need a clear documentation system with bilingual support (En
 - **FR-001**: Repository MUST contain a root README.md and README-RU.md with identical structure explaining project purpose, architecture, and getting started instructions
 - **FR-002**: Repository MUST use workspace management tooling for managing multiple packages in a monorepo structure
 - **FR-003**: Repository MUST contain a packages/ directory for organizing feature packages
-- **FR-004**: Package naming MUST follow the convention: `packages/[feature-name]-frt` for frontend and `packages/[feature-name]-srv` for backend
+- **FR-004**: Package naming MUST follow the convention: `packages/[feature-name]-frt` for frontend and `packages/[feature-name]-srv` for backend with @universo/ scoped names in package.json (e.g., `@universo/clusters-frt`)
 - **FR-005**: Each package MUST contain a base/ subdirectory for core implementation
 - **FR-006**: Repository MUST contain .gitignore file configured for Node.js (PNPM), Python (Django), and common editor artifacts
 - **FR-007**: Repository MUST include configuration files for reactive component-based frontend development with static type checking
@@ -143,15 +161,32 @@ As a contributor, I need a clear documentation system with bilingual support (En
 - **FR-018**: Repository MUST NOT include a docs/ directory (documentation will be separate)
 - **FR-019**: Repository MUST NOT include AI agent configuration files in root (users create these themselves)
 - **FR-020**: Package structure MUST support multiple implementations within each package (hence the base/ directory requirement)
+- **FR-021**: Repository MUST include a package scaffolding CLI script (`pnpm create-package`) that automates creation of new feature packages with proper structure, package.json files, and workspace configuration updates
+- **FR-022**: The package scaffolding script MUST create both frontend (-frt) and backend (-srv) package directories with base/ subdirectories and appropriate boilerplate configuration files
+- **FR-023**: Documentation MUST define three developer personas (Feature Developers, Platform Maintainers, Documentation Contributors) with specific guidance for each
+- **FR-024**: Build performance targets MUST be documented: <60s clean install, <10s incremental install, <2min package build, <10min full build, <3s hot reload
+
+### Non-Functional Requirements
+
+- **NFR-001**: Monorepo MUST support scaling to 50-100 packages without significant performance degradation
+- **NFR-002**: Clean workspace installation (`pnpm install`) MUST complete in under 60 seconds
+- **NFR-003**: Incremental workspace installation MUST complete in under 10 seconds
+- **NFR-004**: Individual package builds MUST complete in under 2 minutes
+- **NFR-005**: Full monorepo build MUST complete in under 10 minutes
+- **NFR-006**: Hot reload during development MUST respond in under 3 seconds
+- **NFR-007**: Package separation criteria MUST be documented: independent release cycles, >100MB size, >10min build time, or external team ownership
+- **NFR-008**: Documentation MUST address three distinct developer personas with tailored guidance for each
 
 ### Key Entities
 
-- **Package**: A modular unit of functionality, separated into frontend (-frt) and backend (-srv) variants, containing base implementation and potentially multiple technology-specific implementations
-- **Workspace**: The PNPM-managed monorepo containing all packages with shared dependency management
+- **Package**: A modular unit of functionality with @universo/ scoped name, separated into frontend (-frt) and backend (-srv) variants, containing base implementation and potentially multiple technology-specific implementations
+- **Workspace**: The PNPM-managed monorepo containing all packages with shared dependency management and catalog for version consistency
 - **Documentation Pair**: An English documentation file and its Russian translation counterpart maintaining identical structure
 - **Feature**: A complete piece of functionality consisting of frontend and backend packages working together
 - **Repository Configuration**: GitHub settings, labels, templates, and guidelines that govern collaboration
 - **Base Implementation**: The core code within a package's base/ directory that may have multiple technology stack variations in the future
+- **Developer Persona**: One of three roles (Feature Developer, Platform Maintainer, Documentation Contributor) with specific needs and workflows
+- **Scaffolding Script**: CLI tool for automated package creation following established patterns
 
 ## Success Criteria *(mandatory)*
 
@@ -160,11 +195,14 @@ As a contributor, I need a clear documentation system with bilingual support (En
 - **SC-001**: A new developer can clone the repository and understand the project structure within 15 minutes by reading README files
 - **SC-002**: All core documentation files have Russian translations with 100% structural equivalence (same line count, same sections)
 - **SC-003**: Workspace management commands (install, build) execute successfully across all configured packages
-- **SC-004**: Package structure follows documented conventions with 100% compliance (all packages have -frt/-srv separation and base/ directories)
+- **SC-004**: Package structure follows documented conventions with 100% compliance (all packages have @universo/ scoped names, -frt/-srv separation, and base/ directories)
 - **SC-005**: GitHub repository has minimum 10 labels configured covering types (bug, feature, enhancement, documentation) and areas (frontend, backend, i18n, repository)
 - **SC-006**: All instruction files in `.github/instructions/` are present and accessible (github-issues.md, github-labels.md, github-pr.md, i18n-docs.md)
 - **SC-007**: Repository structure enables independent package development where a developer can work on a single package without requiring changes to others
 - **SC-008**: Documentation clearly articulates technology stack choices and rationale for the reactive frontend, API backend, and database platform
+- **SC-009**: Package scaffolding script (`pnpm create-package`) successfully creates properly structured packages in under 5 seconds
+- **SC-010**: Clean workspace installation completes in under 60 seconds on standard developer hardware
+- **SC-011**: Documentation provides clear guidance for all three developer personas (Feature Developer, Platform Maintainer, Documentation Contributor)
 
 ## Assumptions
 
