@@ -1,18 +1,24 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.0.0 → 1.1.0 (Added new principles VIII and IX)
-Modified Principles: None
-Added Sections: 
-  - VIII. Security and Error Resilience
-  - IX. Package Lifecycle Management
+Version Change: 1.1.0 → 1.2.0 (Enhanced based on universo-platformo-react analysis)
+Modified Principles:
+  - I. Added catalog-based dependency management pattern
+  - II. Updated with specific Vue/Django tooling aligned with React version patterns
+  - X. Added internationalization architecture principle
+  - XI. Added centralized shared packages principle
+  - XII. Added build orchestration principle
+Added Sections:
+  - X. Internationalization Architecture
+  - XI. Centralized Shared Packages
+  - XII. Build Orchestration and Tooling
 Removed Sections: None
 Templates Status:
-  ✅ plan-template.md - Compatible with new principles
+  ✅ plan-template.md - Compatible with enhanced principles
   ✅ spec-template.md - User stories and requirements align with expanded principles
   ✅ tasks-template.md - Task structure supports principle-driven development
 Follow-up TODOs: None - all placeholders resolved
-Change Rationale: Added comprehensive security and error handling principles, and package lifecycle management principles to address gaps identified in specification review
+Change Rationale: Enhanced constitution based on comprehensive analysis of universo-platformo-react repository, incorporating proven architectural patterns while adapting to Vue/Django stack
 -->
 
 # Universo Platformo Vue Constitution
@@ -26,37 +32,51 @@ The project MUST be organized as a monorepo managed by PNPM workspace.
 **Rules**:
 - All packages reside in `packages/` directory
 - Each package follows naming convention: `{feature}-frt` (frontend) or `{feature}-srv` (backend)
+- Package names MUST use @universo/ scoped naming in package.json (e.g., `@universo/clusters-frt`)
 - Each package contains a `base/` root directory to support future multiple implementations
-- PNPM workspace configuration manages inter-package dependencies
+- PNPM workspace configuration includes both `packages/*` and `packages/*/base` patterns
+- Shared dependencies MUST use catalog-based version management in pnpm-workspace.yaml
+- Workspace dependencies referenced via `workspace:*` protocol
 - Shared dependencies are hoisted to root when appropriate
 
-**Rationale**: Monorepo structure enables code sharing, consistent tooling, and atomic cross-package changes while PNPM provides efficient disk space usage and strict dependency resolution.
+**Rationale**: Monorepo structure enables code sharing, consistent tooling, and atomic cross-package changes while PNPM provides efficient disk space usage and strict dependency resolution. Catalog-based dependency management ensures version consistency across all packages. Scoped package names prevent naming conflicts and enable future npm publishing.
 
 ### II. Technology Stack Consistency
 
 Frontend MUST use Vue 3 with TypeScript. Backend MUST use Django with Python.
 
 **Rules**:
-- Frontend: Vue 3 + TypeScript + Vite (build tool) + MUI (Material UI library)
-- Backend: Django + Python 3.10+ + Django REST Framework
-- Type safety enforced in TypeScript code
+- Frontend: Vue 3 (Composition API) + TypeScript + Vite (build tool)
+- Backend: Django 4.2+ + Python 3.10+ + Django REST Framework
+- UI Library: Material UI components for Vue (Vue equivalent of MUI)
+- State Management: Pinia (Vue's official state management)
+- Routing: Vue Router
+- Data Fetching: TanStack Query (Vue Query) for React Query equivalent patterns
+- Forms: VeeValidate with Zod for validation (Vue equivalent of react-hook-form)
+- Type safety enforced in TypeScript code with strict mode
 - Python type hints required in all new backend code
 - No mixing of frameworks within a layer (no React in Vue frontend, no Flask in Django backend)
+- Frontend packages use tsconfig.json extending from root configuration
+- Backend packages use Django ORM for database operations (equivalent to TypeORM pattern)
 
-**Rationale**: Technology consistency reduces cognitive load, simplifies onboarding, and ensures architectural coherence. These choices align with modern best practices and robust ecosystems.
+**Rationale**: Technology consistency reduces cognitive load, simplifies onboarding, and ensures architectural coherence. These choices align with modern best practices and robust ecosystems while maintaining conceptual parity with the React version.
 
 ### III. Database-First with Supabase Priority
 
 Primary database MUST be Supabase with architecture supporting future DBMS expansion.
 
 **Rules**:
-- Supabase is the current and primary supported database
+- Supabase (PostgreSQL) is the current and primary supported database
 - Database access layer MUST be abstracted to support future DBMS additions
-- Direct SQL queries are discouraged; use ORM/query builders
-- Migration scripts MUST be version-controlled and reversible
+- Direct SQL queries are discouraged; use Django ORM
+- Migration scripts MUST be version-controlled and reversible using Django migrations
 - Database schema changes require explicit approval in PR reviews
+- Entities MUST use UUID primary keys (not auto-incrementing integers)
+- All entities MUST include created_at and updated_at timestamp fields
+- Schema-based organization for logical separation (e.g., 'clusters' schema for clusters/domains/resources)
+- Entity relationships (many-to-many) MUST use explicit junction tables with additional metadata
 
-**Rationale**: Supabase provides excellent developer experience and BaaS features. Abstraction layer ensures we're not locked into a single provider and can expand to PostgreSQL, MySQL, or others as needed.
+**Rationale**: Supabase provides excellent developer experience and BaaS features. Abstraction layer ensures we're not locked into a single provider and can expand to PostgreSQL, MySQL, or others as needed. UUID primary keys enable distributed systems and prevent ID collision. Schema-based organization improves maintainability in large applications.
 
 ### IV. Authentication Standard with Passport.js
 
@@ -146,35 +166,104 @@ Package creation, evolution, and retirement MUST follow documented procedures.
 
 **Rationale**: Clear package lifecycle management prevents chaos as the monorepo scales. Consistent procedures reduce errors and make the system more maintainable.
 
+### X. Internationalization Architecture
+
+All user-facing content MUST support internationalization with English and Russian as primary languages.
+
+**Rules**:
+- Each frontend package MUST include an i18n directory with locales subdirectory
+- Locales MUST be organized as `i18n/locales/en/` and `i18n/locales/ru/`
+- Each package registers its namespaces with centralized @universo/i18n package
+- Translation files MUST use JSON format with nested keys (dot notation in code)
+- All UI strings MUST be externalized (no hardcoded strings in components)
+- Translation keys MUST follow pattern: `{namespace}.{section}.{key}` (e.g., `clusters.members.title`)
+- Pluralization MUST use i18next standard format (`_one`, `_other` suffixes)
+- Date/time formatting MUST use locale-aware libraries (dayjs with locales)
+- Numbers, currencies, and units MUST respect locale formatting
+- Missing translations MUST fall back to English gracefully
+
+**Rationale**: Centralized i18n architecture ensures consistency across packages while allowing independent namespace registration. Structured translation keys improve maintainability. Following i18next patterns enables rich translation features (pluralization, interpolation, context).
+
+### XI. Centralized Shared Packages
+
+Common functionality MUST be extracted into shared packages to avoid duplication.
+
+**Rules**:
+- @universo/types package MUST contain shared TypeScript types and interfaces
+- @universo/utils package MUST contain shared utility functions
+- @universo/i18n package MUST provide centralized i18next instance and registration
+- @universo/api-client package MUST provide type-safe API client for all backend services
+- @universo/template-{framework} packages MUST provide reusable UI components and layouts
+- Shared packages MUST have minimal external dependencies
+- Shared packages MUST be framework-agnostic when possible (types, utils)
+- Frontend shared packages MAY depend on framework (Vue) when necessary (templates, i18n)
+- Backend shared packages MUST be Python-based with minimal Django coupling
+- All packages MUST export clear public APIs via index files
+- Breaking changes in shared packages require coordination across dependent packages
+
+**Rationale**: Centralized shared packages reduce code duplication, ensure consistency, and create single sources of truth for common functionality. Type-safe API clients prevent runtime errors. Shared component libraries maintain UI consistency.
+
+### XII. Build Orchestration and Tooling
+
+Build process MUST be efficient, cacheable, and support incremental compilation.
+
+**Rules**:
+- Turbo (or equivalent) MUST be used for build orchestration and task caching
+- Build pipeline MUST define clear dependency graph (dependsOn configuration)
+- Each package MUST define build, dev, clean, and lint scripts
+- Development mode MUST support watch mode for fast iteration
+- Build outputs MUST be gitignored (dist/, build/, __pycache__/)
+- Frontend packages SHOULD use Vite for fast builds and HMR
+- Backend packages SHOULD use Django development server with auto-reload
+- Root-level commands MUST support filtering by package (pnpm --filter)
+- Build artifacts MUST be reproducible (lock files committed)
+- CI/CD pipelines MUST leverage build caching for performance
+- Full workspace build MUST complete within performance targets (see NFR-005)
+
+**Rationale**: Build orchestration with caching dramatically improves developer experience by reducing wait times. Clear dependency graphs prevent build order issues. Incremental compilation and watch modes enable rapid iteration. Performance targets ensure the system remains manageable as it scales.
+
 ## Technology Constraints
 
 ### Frontend Technology
 
 - **Framework**: Vue 3 (Composition API preferred)
 - **Language**: TypeScript 5.0+
-- **Build Tool**: Vite
-- **UI Library**: MUI (Material UI for Vue)
+- **Build Tool**: Vite 5.x
+- **UI Library**: Vuetify 3.x or PrimeVue (Vue Material UI equivalent)
 - **State Management**: Pinia (Vue's official state management)
-- **Routing**: Vue Router
-- **HTTP Client**: Axios or Fetch API with proper error handling
+- **Routing**: Vue Router 4.x
+- **Data Fetching**: @tanstack/vue-query (TanStack Query for Vue)
+- **Forms**: VeeValidate with Zod/Yup for validation
+- **HTTP Client**: Axios with interceptors for auth
+- **i18n**: vue-i18n (aligned with i18next patterns from React version)
+- **Icons**: Material Design Icons or @mdi/js
+- **Testing**: Vitest + @testing-library/vue
+- **Linting**: ESLint with Vue3 plugin
+- **Formatting**: Prettier
 
 ### Backend Technology
 
 - **Framework**: Django 4.2+
 - **Language**: Python 3.10+
-- **API**: Django REST Framework
+- **API**: Django REST Framework 3.14+
 - **Database ORM**: Django ORM (with Supabase PostgreSQL)
-- **Authentication**: Passport.js integration layer
-- **Task Queue**: Celery (when async tasks required)
+- **Authentication**: Django authentication with JWT (PyJWT) for stateless auth
+- **Migrations**: Django migrations system
+- **Validation**: Pydantic or Django REST Framework serializers
+- **Task Queue**: Celery + Redis (when async tasks required)
 - **Testing**: pytest + pytest-django
+- **Linting**: Flake8, Black, isort
+- **Type Checking**: mypy
 
 ### Infrastructure
 
-- **Package Manager**: PNPM (root and frontend)
-- **Python Environment**: Poetry or pipenv
-- **Database**: Supabase (PostgreSQL with BaaS features)
+- **Package Manager**: PNPM 9.x (frontend workspace)
+- **Python Environment**: Poetry (for dependency management)
+- **Build Orchestration**: Turborepo or Nx
+- **Database**: Supabase (PostgreSQL 15+ with BaaS features)
 - **Version Control**: Git with conventional commits
 - **CI/CD**: GitHub Actions (when configured)
+- **Deployment**: Docker (optional containerization)
 
 ## Development Workflow
 
@@ -229,4 +318,4 @@ This constitution supersedes all other development practices and guides. Amendme
 
 **Specification Guidance**: Use `.specify/templates/` and related Spec Kit workflows for feature development guidance.
 
-**Version**: 1.1.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
+**Version**: 1.2.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
