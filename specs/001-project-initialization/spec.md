@@ -5,6 +5,12 @@
 **Status**: Draft  
 **Input**: User description: "Initialize Universo Platformo Vue repository with monorepo structure, Vue/TypeScript frontend, Django/Python backend, PNPM workspace management, base package structure, and bilingual documentation system (English/Russian)"
 
+## Clarifications
+
+### Session 2025-11-16
+
+- Q: When a developer wants to create a new feature package (e.g., "clusters" with clusters-frt and clusters-srv), what is the step-by-step workflow? → A: Script-assisted approach - A CLI tool/script (`pnpm create-package [name]`) scaffolds the directory structure, package.json files, and updates workspace config; developer implements functionality. This provides automation for boilerplate while maintaining flexibility, following modern monorepo best practices rather than the manual approach used in universo-platformo-react.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Repository Foundation Setup (Priority: P1)
@@ -41,20 +47,20 @@ As a developer, I need a working monorepo setup with PNPM workspace management s
 
 ---
 
-### User Story 3 - Package Structure Foundation (Priority: P2)
+### User Story 3 - Package Structure Foundation and Scaffolding (Priority: P2)
 
-As a developer, I need a standardized package structure template so that when creating new features, I follow consistent patterns for organizing frontend and backend code with proper base implementations.
+As a developer, I need a package scaffolding CLI tool that automates creation of new feature packages so that I can quickly create properly structured frontend and backend packages following consistent patterns without manual setup errors.
 
-**Why this priority**: Establishes the architectural pattern that all future packages will follow. This ensures consistency and makes the codebase more maintainable as it grows.
+**Why this priority**: Establishes the architectural pattern that all future packages will follow and provides automation to reduce errors. This ensures consistency and makes the codebase more maintainable as it grows. Script-assisted approach is superior to the manual method used in universo-platformo-react.
 
-**Independent Test**: Can be fully tested by examining the package structure template/examples and verifying they follow the documented conventions with separate frontend/backend packages and base directories.
+**Independent Test**: Can be fully tested by running the package scaffolding command (e.g., `pnpm create-package test-feature`) and verifying that it creates properly structured frontend and backend packages with base directories, correct package.json files, and updates workspace configuration.
 
 **Acceptance Scenarios**:
 
-1. **Given** the packages directory, **When** creating a new feature package, **Then** it follows the pattern of separate `-frt` (frontend) and `-srv` (backend) packages
-2. **Given** a package directory, **When** examining its structure, **Then** it contains a `base/` subdirectory for the core implementation
-3. **Given** package documentation, **When** reading package structure guidelines, **Then** clear instructions exist for organizing frontend (Vue/TypeScript) and backend (Django/Python) code
-4. **Given** example packages or templates, **When** reviewing them, **Then** they demonstrate proper separation of concerns and base implementation patterns
+1. **Given** the repository with PNPM workspace, **When** a developer runs `pnpm create-package [feature-name]`, **Then** it creates both `packages/[feature-name]-frt` and `packages/[feature-name]-srv` directories with proper structure
+2. **Given** newly created package directories, **When** examining their structure, **Then** each contains a `base/` subdirectory with boilerplate configuration files (package.json, tsconfig.json for frontend, appropriate Python config for backend)
+3. **Given** the scaffolding script execution, **When** packages are created, **Then** the workspace configuration (pnpm-workspace.yaml) is automatically updated to include the new packages
+4. **Given** the created packages, **When** running `pnpm install`, **Then** the new packages are properly recognized and linked in the workspace
 
 ---
 
@@ -111,13 +117,14 @@ As a contributor, I need a clear documentation system with bilingual support (En
 
 ### Edge Cases
 
-- What happens when a developer tries to add a package that doesn't follow the naming convention (-frt/-srv)?
+- What happens when a developer tries to add a package that doesn't follow the naming convention (-frt/-srv)? → The scaffolding script enforces the naming convention automatically
+- What happens if a developer runs the scaffolding script with a package name that already exists? → The script should detect existing packages and prompt for confirmation or abort to prevent overwriting
 - How does the system handle when Russian documentation becomes out of sync with English documentation?
-- What happens if a developer creates a package without a base/ directory?
+- What happens if a developer creates a package without a base/ directory? → The scaffolding script creates base/ directory automatically; manual package creation is discouraged
 - How does the repository handle dependencies that conflict between frontend and backend packages?
 - What happens when trying to use a database other than Supabase for the first time?
 - How does the system handle when an issue is created without the Russian translation spoiler?
-- What happens if package names conflict with existing JavaScript/Python package names?
+- What happens if package names conflict with existing JavaScript/Python package names? → Package naming with @universo/ scope reduces collision risk; documentation should warn about reserved names
 
 ## Requirements *(mandatory)*
 
@@ -143,6 +150,8 @@ As a contributor, I need a clear documentation system with bilingual support (En
 - **FR-018**: Repository MUST NOT include a docs/ directory (documentation will be separate)
 - **FR-019**: Repository MUST NOT include AI agent configuration files in root (users create these themselves)
 - **FR-020**: Package structure MUST support multiple implementations within each package (hence the base/ directory requirement)
+- **FR-021**: Repository MUST include a package scaffolding CLI script (`pnpm create-package`) that automates creation of new feature packages with proper structure, package.json files, and workspace configuration updates
+- **FR-022**: The package scaffolding script MUST create both frontend (-frt) and backend (-srv) package directories with base/ subdirectories and appropriate boilerplate configuration files
 
 ### Key Entities
 
