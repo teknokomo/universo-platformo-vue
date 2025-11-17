@@ -57,7 +57,43 @@ Initialize Universo Platformo Vue repository with monorepo structure using PNPM 
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### Principle I: Monorepo Architecture with PNPM
+✅ **PASS** - Project initializes PNPM workspace with packages/ directory, scoped @universo/ naming, catalog-based dependency management
+
+### Principle II: Technology Stack Consistency
+✅ **PASS** - Vue 3 + TypeScript frontend, Django + Python backend as specified
+
+### Principle III: Database-First with Supabase Priority
+✅ **PASS** - Supabase (PostgreSQL) as primary database with abstraction layer for future expansion
+
+### Principle IV: Authentication Standard with Passport.js
+⚠️ **MODIFIED** - Using Django authentication with JWT instead of Passport.js (Node.js library). This is appropriate for Django backend.
+
+### Principle V: Bilingual Documentation (English/Russian)
+✅ **PASS** - All documentation will be bilingual with identical structure
+
+### Principle VI: Issue-Driven Development Workflow
+✅ **PASS** - GitHub issues, labels, and PR templates will be configured
+
+### Principle VII: Reference Implementation Pattern
+✅ **PASS** - Following universo-platformo-react patterns adapted to Vue/Django
+
+### Principle VIII: Security and Error Resilience
+✅ **PASS** - Security best practices and error handling documented
+
+### Principle IX: Package Lifecycle Management
+✅ **PASS** - Package scaffolding script and lifecycle procedures will be implemented
+
+### Principle X: Internationalization Architecture
+✅ **PASS** - i18n architecture with @universo/i18n package and namespace registration
+
+### Principle XI: Centralized Shared Packages
+✅ **PASS** - Shared packages (@universo/types, utils, i18n, api-client, template-vue) planned
+
+### Principle XII: Build Orchestration and Tooling
+✅ **PASS** - Turborepo/Nx for build orchestration with caching
+
+**Overall Assessment**: PASS with one adaptation (Principle IV modified appropriately for Django)
 
 ## Project Structure
 
@@ -74,57 +110,69 @@ specs/[###-feature]/
 ```
 
 ### Source Code (repository root)
-<!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
--->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+# Monorepo structure for Universo Platformo Vue
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+# Root configuration files
+pnpm-workspace.yaml      # PNPM workspace configuration with catalog
+package.json             # Root package.json with workspace scripts
+turbo.json              # Turborepo build orchestration config
+.gitignore              # Ignore patterns for Node.js, Python, editors
+tsconfig.json           # Root TypeScript configuration
+.prettierrc             # Prettier formatting configuration
+.eslintrc.js            # ESLint configuration
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
+# Documentation
+README.md               # English documentation
+README-RU.md            # Russian documentation (identical structure)
 
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+# GitHub configuration
+.github/
+├── instructions/       # Already exists with issue/PR/label guidelines
+└── ISSUE_TEMPLATE/    # Issue templates (to be created)
+└── PULL_REQUEST_TEMPLATE.md  # PR template (to be created)
 
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
+# Packages directory
+packages/
+├── types/              # @universo/types - Shared TypeScript types
+│   └── base/
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── src/
+├── utils/              # @universo/utils - Shared utility functions
+│   └── base/
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── src/
+├── i18n/               # @universo/i18n - Centralized i18n instance
+│   └── base/
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── src/
+├── api-client/         # @universo/api-client - Type-safe API client
+│   └── base/
+│       ├── package.json
+│       ├── tsconfig.json
+│       └── src/
+└── template-vue/       # @universo/template-vue - Shared UI components
+    └── base/
+        ├── package.json
+        ├── tsconfig.json
+        └── src/
 
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+# Scripts directory
+scripts/
+└── create-package.js   # Package scaffolding CLI tool
+
+# Python backend packages (future)
+# Each backend package will follow Django app structure with requirements.txt
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Web application monorepo structure (Option 2 adapted). The repository uses PNPM workspace for frontend packages with scoped @universo/ names. Each package contains a base/ directory to support future multiple implementations. Backend packages will be added as Django apps when features are implemented. The scaffolding script will automate creation of properly structured packages.
 
 ## Complexity Tracking
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+No violations requiring justification. The adaptation of Principle IV (authentication) from Passport.js to Django authentication with JWT is appropriate and aligns with the backend technology choice.
