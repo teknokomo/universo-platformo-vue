@@ -461,9 +461,379 @@ These benchmarks are well within our target performance goals.
 8. Wait for review and approval
 9. Merge to main
 
+## Additional Best Practices from 2024 Research
+
+### 11. Vue 3 Composition API Advanced Patterns
+
+**Enhanced Best Practices** (from latest 2024 sources):
+
+**Composable Organization**:
+- Extract reusable logic into composables following single-responsibility principle
+- Name composables with `use` prefix (e.g., `useCounter`, `useAuth`)
+- Group related state, computed, and methods together by concern, not lifecycle
+- Keep composables focused and testable
+
+**TypeScript Type Safety**:
+- Always use explicit types with `ref` and `reactive` state:
+  ```ts
+  const count = ref<number>(0)
+  const user = ref<User | null>(null)
+  ```
+- Use interfaces for complex states and props
+- Leverage `<script setup lang="ts">` for improved type inference
+- Type computed properties explicitly when necessary
+- Use `InjectionKey` for type-safe provide/inject
+
+**Async Handling Pattern**:
+```ts
+const loading = ref(false)
+const error = ref<string | null>(null)
+const data = ref<T | null>(null)
+
+async function fetchData() {
+  loading.value = true
+  error.value = null
+  try {
+    data.value = await api.fetch()
+  } catch (err) {
+    error.value = String(err)
+  } finally {
+    loading.value = false
+  }
+}
+```
+
+**Component Best Practices**:
+- Keep components small and single-purpose
+- Use `defineProps` and `defineEmits` with TypeScript for type safety
+- Prefer type-based declarations for emits in Vue 3.3+:
+  ```ts
+  const emit = defineEmits<{
+    change: [id: number]
+    update: [value: string]
+  }>()
+  ```
+
+**Implementation Notes**:
+- Use these patterns in all Vue 3 packages
+- Document composable APIs in JSDoc comments
+- Create shared composables in @universo/utils package
+- Establish composable testing patterns early
+
+### 12. Vuetify 3 Integration Patterns
+
+**Configuration Best Practices**:
+
+**Material Design 3 Blueprint**:
+- Apply MD3 blueprint for modern Material Design styling:
+  ```ts
+  import { md3 } from 'vuetify/blueprints'
+  
+  const vuetify = createVuetify({
+    blueprint: md3,
+    // ... other config
+  })
+  ```
+
+**Theme Configuration**:
+- Define comprehensive light/dark themes with semantic color tokens
+- Use theme variables consistently across components
+- Configure global component defaults for consistency
+
+**Icon Integration**:
+- Use Material Design Icons via `@mdi/js` for tree-shaking benefits
+- Configure icon sets in Vuetify initialization
+- Avoid importing full icon font when possible
+
+**SSR Support**:
+- Enable SSR mode for server-side rendering:
+  ```ts
+  createVuetify({ ssr: true })
+  ```
+
+**Date Adapter System**:
+- Configure date adapters centrally for all date components
+- Support multiple date libraries (Day.js, Luxon, date-fns, Moment.js)
+- Ensure locale-aware date formatting
+
+**Plugin File Structure**:
+```
+src/plugins/vuetify.ts
+- Import styles and icons
+- Configure themes, blueprints, icons
+- Set global defaults
+- Export vuetify instance
+```
+
+**Type-Safe Component Wrappers**:
+- Extract types from Vuetify components:
+  ```ts
+  type VDialogProps = InstanceType<typeof VDialog>['$props']
+  ```
+- Handle emits and slots separately for full TypeScript safety
+- Document wrapper components thoroughly
+
+**Implementation Strategy**:
+- Create vuetify plugin in @universo/template-vue
+- Use auto-imports where possible
+- Configure in separate plugin file for maintainability
+- Integrate with vue-i18n for translations
+
+### 13. Django REST Framework Advanced Patterns
+
+**Service/Repository Pattern** (from 2024 best practices):
+- Separate business logic (services) from data access (repositories)
+- Keep views thin, logic in services
+- Make services testable independently
+- Structure:
+  ```
+  services/
+    ├── user_service.py
+    └── auth_service.py
+  repositories/
+    ├── user_repository.py
+    └── token_repository.py
+  ```
+
+**API Design Principles**:
+- Resource-oriented URIs with plural naming
+- Consistent HTTP method usage
+- Stateless communication
+- Semantic versioning (`/api/v1/...`)
+
+**ViewSet Best Practices**:
+- Use ModelViewSet for standard CRUD operations
+- Use ReadOnlyModelViewSet for read-only resources
+- Use APIView for custom endpoints
+- Organize related operations in ViewSets
+- Leverage DRF routers for automatic URL generation
+
+**Serializer Patterns**:
+- Use ModelSerializer for model mapping
+- Create custom serializers for complex business rules
+- Nest serializers for related data (but avoid deep nesting)
+- Validate in serializers, not views
+- Return standardized error responses
+
+**Performance Optimization**:
+- Use `select_related` and `prefetch_related` to avoid N+1 queries
+- Implement pagination for all list endpoints
+- Add caching for frequently accessed data
+- Consider async views for high-traffic endpoints
+
+**Security Best Practices**:
+- Require authentication on all endpoints (except public ones)
+- Implement fine-grained permissions (IsAuthenticated, custom classes)
+- Use rate limiting/throttling (AnonRateThrottle, UserRateThrottle)
+- Return clear error messages without exposing sensitive data
+- Always use HTTPS in production
+
+**JWT Authentication Pattern**:
+- Use djangorestframework-simplejwt package
+- Short-lived access tokens (15-30 min)
+- Long-lived refresh tokens (7 days)
+- Token in Authorization header: `Bearer <token>`
+- Implement token refresh endpoint
+
+**Testing Strategy**:
+- Write unit tests for serializers and services
+- Write integration tests for API endpoints
+- Use DRF's APITestCase and APIClient
+- Test authentication and permission logic
+- Maintain high test coverage
+
+### 14. Monorepo Best Practices (PNPM + Turborepo)
+
+**Workspace Structure** (refined from 2024 patterns):
+```
+monorepo/
+├─ apps/              # Applications
+│  ├─ web/            # Main Vue app
+│  └─ admin/          # Admin app
+├─ packages/          # Shared packages
+│  ├─ ui/             # Shared UI components
+│  ├─ types/          # Shared TypeScript types
+│  ├─ utils/          # Shared utilities
+│  └─ i18n/           # Shared i18n
+└─ backend/           # Django backend
+    └─ api/           # Django project
+```
+
+**PNPM Workspace Configuration**:
+- Use `workspace:` protocol for local dependencies
+- Move common dependencies to root `package.json`
+- Use catalog for shared dependency versions
+- Configure workspace patterns in `pnpm-workspace.yaml`
+
+**Turborepo Pipeline**:
+```json
+{
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"]
+    }
+  }
+}
+```
+
+**Best Practices**:
+- Use `dependsOn` to define task dependencies
+- Enable caching for deterministic tasks
+- Configure outputs for cache invalidation
+- Use parallel execution where possible
+- Set up remote caching for CI/CD
+
+**Integration with Django**:
+- Keep Django dependencies separate (requirements.txt)
+- Use separate build/dev commands for Django
+- API communication via HTTP between frontend and backend
+- Optional: Generate TypeScript types from Django models
+
+**Shared Configuration**:
+- Create config packages for ESLint, Prettier, TypeScript
+- Reference configs from each app/package
+- Ensure consistency across all packages
+- Use extends for base configurations
+
+### 15. Vue i18n Monorepo Architecture
+
+**Package-Level i18n Structure**:
+```
+packages/clusters-frt/
+└── src/
+    └── i18n/
+        ├── locales/
+        │   ├── en/
+        │   │   └── clusters.json
+        │   └── ru/
+        │       └── clusters.json
+        └── index.ts (namespace registration)
+```
+
+**Namespace Pattern**:
+- Each package manages its own translations
+- Namespace format: `{package}.{section}.{key}`
+- Example: `clusters.members.title`
+- Register namespaces automatically on package import
+
+**Centralized i18n Package**:
+```ts
+// @universo/i18n
+import { createI18n } from 'vue-i18n'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  fallbackLocale: 'en',
+  messages: {}
+})
+
+export function registerNamespace(namespace: string, messages: any) {
+  for (const locale in messages) {
+    i18n.global.mergeLocaleMessage(locale, {
+      [namespace]: messages[locale]
+    })
+  }
+}
+
+export default i18n
+```
+
+**Best Practices**:
+- Lazy load locale files based on language
+- Use composables for i18n access (`useI18n()`)
+- Keep translation keys organized and namespaced
+- Provide fallback locale always
+- Support pluralization and interpolation
+- Store locale preference in localStorage/cookies
+- Integrate with Vue Router for locale-prefixed URLs
+
+**Testing**:
+- Lint for hardcoded strings
+- Test translation key existence
+- Verify pluralization rules
+- Test locale switching
+
+### 16. TypeScript Configuration Hierarchy
+
+**Root Configuration** (enhanced):
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "jsx": "preserve"
+  }
+}
+```
+
+**Package-Level Extension**:
+```json
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
+```
+
+**Best Practices**:
+- Enable strict mode and all strict flags
+- Use `noUncheckedIndexedAccess` for array safety
+- Configure paths for workspace dependencies
+- Use project references for build optimization
+- Enable composite for incremental compilation
+
+## Research Summary
+
+This research phase incorporated the latest 2024 best practices from:
+1. **Internet sources**: Vue 3 Composition API patterns, Django REST Framework design principles, PNPM/Turborepo monorepo strategies
+2. **Context7 documentation**: Official Vue 3 docs, Django 4.2 docs, Vuetify 3 configuration patterns
+3. **Community best practices**: DEV.to guides, CodezUp tutorials, production-ready templates
+
+Key enhancements to the original research:
+- Advanced Vue 3 Composition API patterns with TypeScript
+- Vuetify 3 Material Design 3 blueprint integration
+- Django service/repository pattern for better separation of concerns
+- Enhanced monorepo structure with apps/ and packages/ separation
+- Package-level i18n architecture with namespace registration
+- Comprehensive TypeScript configuration hierarchy
+
+All findings align with and enhance the existing research without contradicting the core architectural decisions.
+
 ## Open Questions
 
-No open questions remaining. All technical decisions have been researched and documented above.
+No open questions remaining. All technical decisions have been researched and validated against 2024 best practices.
 
 ## Next Steps
 

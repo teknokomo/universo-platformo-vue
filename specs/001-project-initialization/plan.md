@@ -16,11 +16,11 @@ Initialize Universo Platformo Vue repository with monorepo structure using PNPM 
 - Backend: Python 3.10+
 
 **Primary Dependencies**: 
-- Frontend: Vue 3 (Composition API), Vite 5.x, Pinia, Vue Router 4.x, @tanstack/vue-query, VeeValidate with Zod, Vuetify 3.x or PrimeVue, vue-i18n
-- Backend: Django 4.2+, Django REST Framework 3.14+, PyJWT, Pydantic, pytest-django
-- Build/Tooling: PNPM 9.x, Turborepo or Nx, ESLint, Prettier, Black, Flake8, mypy
+- Frontend: Vue 3 (Composition API with MD3 blueprint), Vite 5.x, Pinia, Vue Router 4.x, @tanstack/vue-query, VeeValidate with Zod, Vuetify 3.x (Material Design 3), vue-i18n
+- Backend: Django 4.2+ (with Service/Repository pattern), Django REST Framework 3.14+, djangorestframework-simplejwt, Pydantic, pytest-django
+- Build/Tooling: PNPM 9.x, Turborepo (recommended), ESLint, Prettier, Black, Flake8, mypy
 - Database: Supabase (PostgreSQL 15+)
-- Authentication: Django authentication with JWT (stateless auth pattern)
+- Authentication: Django authentication with JWT (djangorestframework-simplejwt, stateless auth pattern)
 
 **Storage**: Supabase (PostgreSQL 15+) with Django ORM, abstraction layer for future DBMS support
 
