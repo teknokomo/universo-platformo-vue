@@ -154,6 +154,50 @@ As a Platform Maintainer, I need documented procedures for monitoring the univer
 
 ---
 
+### User Story 8 - Shared Packages and Build Orchestration (Priority: P1)
+
+As a developer, I need centralized shared packages and efficient build orchestration so that I can reuse common functionality across feature packages and maintain fast build times as the monorepo scales.
+
+**Why this priority**: Shared packages establish the architectural foundation that all feature packages will depend on. Build orchestration with caching is essential for developer productivity from day one. Without these, developers will duplicate code and face increasingly slow builds.
+
+**Independent Test**: Can be fully tested by verifying that shared packages exist, are properly integrated, build orchestration is configured, and builds leverage caching for performance.
+
+**Acceptance Scenarios**:
+
+1. **Given** the monorepo structure, **When** examining packages directory, **Then** @universo/types, @universo/utils, @universo/i18n, @universo/api-client, and @universo/template-vue packages exist with proper structure
+2. **Given** the @universo/types package, **When** importing shared types in a feature package, **Then** TypeScript resolves types correctly and provides intellisense
+3. **Given** the @universo/i18n package, **When** a feature package registers its namespace, **Then** translations are available across the application
+4. **Given** the @universo/api-client package, **When** calling backend APIs, **Then** requests include authentication and return typed responses
+5. **Given** the @universo/template-vue package, **When** using layouts and components, **Then** UI is consistent with theme configuration
+6. **Given** pnpm-workspace.yaml, **When** reviewing the file, **Then** catalog section defines versions for all shared dependencies with explanatory comments
+7. **Given** turbo.json configuration, **When** running `pnpm build`, **Then** tasks execute in correct dependency order with parallel execution where possible
+8. **Given** build caching enabled, **When** running build twice without changes, **Then** second build completes in <5 seconds leveraging cache
+9. **Given** a change to one package, **When** running build, **Then** only affected packages rebuild (incremental compilation)
+10. **Given** catalog-based dependencies, **When** updating a version in catalog, **Then** all packages using that dependency via `catalog:` protocol receive the update
+
+---
+
+### User Story 9 - Package Internationalization Architecture (Priority: P2)
+
+As a feature developer, I need a standardized i18n architecture so that I can add translations to my package without duplicating i18n setup and ensure consistent translation patterns across the application.
+
+**Why this priority**: i18n architecture affects every frontend package and must be established before feature development begins. Centralized approach prevents inconsistency and simplifies maintenance.
+
+**Independent Test**: Can be fully tested by creating a sample package with translations, verifying namespace registration, and checking that translations render correctly in the UI.
+
+**Acceptance Scenarios**:
+
+1. **Given** a frontend package, **When** examining its structure, **Then** it includes src/i18n/locales/en/ and src/i18n/locales/ru/ directories
+2. **Given** translation JSON files, **When** reviewing their structure, **Then** they use nested object format with dot notation keys
+3. **Given** a package's i18n registration, **When** the package is imported, **Then** its namespace is automatically registered with @universo/i18n
+4. **Given** registered translations, **When** using translation keys in components, **Then** correct language strings display based on user locale
+5. **Given** pluralization needs, **When** defining translation keys, **Then** _one and _other variants work correctly with i18next pluralization
+6. **Given** missing translation keys, **When** requesting a key that doesn't exist, **Then** system falls back to English gracefully without breaking UI
+7. **Given** translation interpolation needs, **When** using variables in translations, **Then** values are properly interpolated into strings
+8. **Given** date/time formatting needs, **When** displaying dates, **Then** locale-aware formatting is used consistently
+
+---
+
 ### Edge Cases
 
 - What happens when a developer tries to add a package that doesn't follow the naming convention (-frt/-srv)? → The scaffolding script enforces the naming convention automatically (FR-026)
@@ -277,6 +321,66 @@ As a Platform Maintainer, I need documented procedures for monitoring the univer
 - **FR-071**: Repository SHOULD maintain a tracking document or issue labels for features planned for replication from the React version
 - **FR-072**: Repository MUST document which architectural patterns from React version should be adopted (monorepo, package structure, entity models) and which should be avoided (docs/ directory, incomplete legacy code)
 
+#### Catalog-Based Dependency Management
+
+- **FR-073**: pnpm-workspace.yaml MUST include a catalog section defining versions for all shared dependencies
+- **FR-074**: Packages MUST reference catalog versions using `catalog:` protocol in package.json dependencies
+- **FR-075**: Catalog MUST group dependencies by ecosystem (TypeScript toolchain, UI library, build tools, testing, etc.)
+- **FR-076**: Version updates MUST be made in catalog first, then propagated via `pnpm update`
+- **FR-077**: Catalog MUST include comments explaining version choices and compatibility constraints
+
+#### Build Orchestration
+
+- **FR-078**: Repository MUST include turbo.json (or equivalent) configuration for build orchestration
+- **FR-079**: Build pipeline MUST define task dependencies via `dependsOn` configuration
+- **FR-080**: Build cache MUST be enabled for all deterministic tasks (build, test, lint)
+- **FR-081**: Build outputs MUST be defined in configuration to optimize cache invalidation
+- **FR-082**: Parallel task execution MUST be enabled where dependencies allow
+
+#### Package i18n Architecture
+
+- **FR-083**: Each frontend package MUST include `src/i18n/` directory with `locales/en/` and `locales/ru/` subdirectories
+- **FR-084**: Translation files MUST use JSON format with nested structure matching the package's domain
+- **FR-085**: Each package MUST export an i18n registration function that integrates with @universo/i18n
+- **FR-086**: Package MUST register its namespace on import, not requiring explicit initialization call
+- **FR-087**: Translation keys MUST follow dot notation pattern: `{namespace}.{section}.{subsection}.{key}`
+
+#### Shared Package Architecture
+
+- **FR-088**: Repository MUST include @universo/types package exporting shared TypeScript interfaces
+- **FR-089**: Repository MUST include @universo/utils package exporting shared utility functions
+- **FR-090**: Repository MUST include @universo/i18n package providing centralized i18next instance
+- **FR-091**: Repository MUST include @universo/api-client package providing type-safe API wrappers
+- **FR-092**: @universo/template-vue package MUST provide reusable layouts, components, and theme configuration
+- **FR-093**: Shared packages MUST export via index.ts with clear public API surface
+- **FR-094**: Shared packages MUST minimize external dependencies to reduce version conflicts
+
+#### Entity and Data Model Patterns
+
+- **FR-095**: All entities MUST use UUID as primary key type (not auto-incrementing integers)
+- **FR-096**: All entities MUST include `created_at` and `updated_at` timestamp fields
+- **FR-097**: Many-to-many relationships MUST use explicit junction entities with metadata fields
+- **FR-098**: Entities MUST be organized by schema/module (e.g., clusters.Cluster, clusters.Domain)
+- **FR-099**: Entity names MUST be singular (Cluster, not Clusters)
+- **FR-100**: Database field names MUST use snake_case, model properties MUST use camelCase with mapping
+
+#### API Client Patterns
+
+- **FR-101**: API client MUST provide separate class for each resource type (ClustersApi, DomainsApi, etc.)
+- **FR-102**: API client MUST export query keys factory for TanStack Query integration
+- **FR-103**: Query keys MUST follow hierarchical pattern: `{resource}QueryKeys.list()`, `{resource}QueryKeys.detail(id)`
+- **FR-104**: API methods MUST return typed responses matching backend serializers
+- **FR-105**: API client MUST handle authentication tokens automatically via interceptors
+- **FR-106**: API errors MUST be normalized to consistent error interface
+
+#### Template Package Patterns
+
+- **FR-107**: Template package MUST provide base layout components (AppLayout, DashboardLayout, etc.)
+- **FR-108**: Template package MUST export theme configuration compatible with UI library
+- **FR-109**: Template package MUST provide navigation utilities and route guards
+- **FR-110**: Template package MUST provide reusable UI components (DataTable, ConfirmDialog, etc.)
+- **FR-111**: Template package MUST export factories for common patterns (form factories, dialog factories)
+
 ### Non-Functional Requirements
 
 - **NFR-001**: Monorepo MUST support scaling to 50-100 packages without significant performance degradation
@@ -298,6 +402,7 @@ As a Platform Maintainer, I need documented procedures for monitoring the univer
 
 - **Package**: A modular unit of functionality with @universo/ scoped name, separated into frontend (-frt) and backend (-srv) variants, containing base implementation and potentially multiple technology-specific implementations
 - **Workspace**: The PNPM-managed monorepo containing all packages with shared dependency management and catalog for version consistency
+- **Catalog**: Centralized dependency version registry in pnpm-workspace.yaml ensuring version consistency across packages
 - **Documentation Pair**: An English documentation file and its Russian translation counterpart maintaining identical structure
 - **Feature**: A complete piece of functionality consisting of frontend and backend packages working together
 - **Repository Configuration**: GitHub settings, labels, templates, and guidelines that govern collaboration
@@ -308,6 +413,13 @@ As a Platform Maintainer, I need documented procedures for monitoring the univer
 - **Package Lifecycle**: The complete journey of a package from creation through versioning, dependencies, updates, deprecation, to potential removal
 - **Error Recovery Procedure**: Documented steps for handling and recovering from various failure scenarios in scaffolding, installation, or synchronization
 - **Security Configuration**: Set of practices, settings, and requirements that ensure secure handling of credentials, dependencies, authentication, and data access
+- **Shared Package**: Centralized package providing common functionality (types, utils, i18n, api-client, templates) used across feature packages
+- **i18n Namespace**: Package-specific translation namespace registered with centralized i18n instance
+- **API Client**: Type-safe wrapper around backend APIs with TanStack Query integration
+- **Template Package**: Shared UI components, layouts, and theme configuration for consistent frontend development
+- **Build Pipeline**: Orchestrated build process managed by Turbo/Nx with dependency resolution and caching
+- **Entity**: Database model class with UUID primary key, timestamps, and ORM mappings
+- **Query Keys Factory**: Hierarchical key generation for TanStack Query cache management
 
 ## Success Criteria *(mandatory)*
 
@@ -333,6 +445,16 @@ As a Platform Maintainer, I need documented procedures for monitoring the univer
 - **SC-018**: Repository gracefully handles edge cases with 100% success rate: zero-package state, single-component packages, packages exceeding thresholds
 - **SC-019**: Error messages from all automated tools (scaffolding, validation, installation) are clear and actionable, requiring no additional research to understand and fix
 - **SC-020**: Repository supports all developer workflows documented in User Stories with 100% successful completion rate when following documented procedures
+- **SC-021**: pnpm-workspace.yaml includes catalog section with all shared dependencies properly versioned and documented
+- **SC-022**: turbo.json (or equivalent) configuration defines complete build pipeline with dependency graph and caching enabled
+- **SC-023**: All shared packages (@universo/types, @universo/utils, @universo/i18n, @universo/api-client, @universo/template-vue) are created and properly integrated
+- **SC-024**: Each frontend package includes i18n directory with en/ and ru/ locales and successfully registers namespace with centralized i18n
+- **SC-025**: API client package provides type-safe wrappers for all backend endpoints with TanStack Query integration patterns
+- **SC-026**: Template package exports reusable layouts, components, and theme configuration compatible with UI library
+- **SC-027**: All entities follow standardized patterns: UUID primary keys, created_at/updated_at timestamps, schema-based organization
+- **SC-028**: Build orchestration successfully caches deterministic tasks and executes parallel builds where dependencies allow
+- **SC-029**: Catalog-based dependency management successfully enforces version consistency across all packages
+- **SC-030**: Documentation accurately reflects all architectural patterns from universo-platformo-react adapted to Vue/Django stack
 
 ## Assumptions
 
