@@ -7,6 +7,19 @@
 
 ## Clarifications
 
+### Session 2025-11-17 - Modular Architecture Emphasis
+
+**CRITICAL CLARIFICATION**: This specification MANDATES a strictly modular architecture where ALL functionality (except root-level build/startup files and documentation) MUST be implemented in packages within the `packages/` directory. This is NON-NEGOTIABLE and fundamental to the project's design.
+
+**Key Requirements**:
+1. **ALL feature code** must be in `packages/{feature}-frt/base/` or `packages/{feature}-srv/base/`
+2. **Frontend and backend** must be separate packages (e.g., `packages/clusters-frt` and `packages/clusters-srv`)
+3. **Each package** must have a `base/` subdirectory to support future multiple implementations
+4. **Reference study required**: Developers MUST study https://github.com/teknokomo/universo-platformo-react to understand the package organization pattern
+5. **Non-modular implementation is FORBIDDEN**: Creating features outside the packages/ structure violates core architectural principles
+
+**Rationale**: Packages will gradually be extracted into separate repositories as the project matures. Non-modular implementation makes this impossible and creates insurmountable technical debt.
+
 ### Session 2025-11-16
 
 - Q: When a developer wants to create a new feature package (e.g., "clusters" with clusters-frt and clusters-srv), what is the step-by-step workflow? → A: Script-assisted approach - A CLI tool/script (`pnpm create-package [name]`) scaffolds the directory structure, package.json files, and updates workspace config; developer implements functionality. This provides automation for boilerplate while maintaining flexibility, following modern monorepo best practices rather than the manual approach used in universo-platformo-react.
@@ -220,6 +233,21 @@ As a feature developer, I need a standardized i18n architecture so that I can ad
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
+
+#### Modular Architecture Requirements (CRITICAL - NON-NEGOTIABLE)
+
+- **FR-000-MODULAR**: ALL functionality MUST be implemented in modular packages within `packages/` directory - this is ABSOLUTE and NON-NEGOTIABLE
+- **FR-000-FORBIDDEN**: It is ABSOLUTELY FORBIDDEN to implement features outside the package structure (no src/, lib/, components/, api/ directories in root)
+- **FR-000-SEPARATION**: Frontend and backend for the same feature MUST be in separate packages (e.g., `packages/clusters-frt/` and `packages/clusters-srv/`)
+- **FR-000-BASE**: Every package MUST have a `base/` subdirectory as the root for implementation (e.g., `packages/clusters-frt/base/src/`)
+- **FR-000-REFERENCE**: Developers MUST study https://github.com/teknokomo/universo-platformo-react before implementing to understand package organization patterns
+- **FR-000-EXCEPTIONS**: The ONLY exceptions to modular implementation are:
+  - Root-level build/startup configuration (package.json, pnpm-workspace.yaml, turbo.json, vite.config.ts, tsconfig.json)
+  - Root-level documentation (README.md, README-RU.md, LICENSE, CONTRIBUTING.md)
+  - CI/CD configuration (.github/workflows/)
+  - Development tooling configuration (ESLint, Prettier, .gitignore, .editorconfig)
+
+#### Repository Structure Requirements
 
 - **FR-001**: Repository MUST contain a root README.md and README-RU.md with identical structure explaining project purpose, architecture, and getting started instructions
 - **FR-002**: Repository MUST use workspace management tooling for managing multiple packages in a monorepo structure

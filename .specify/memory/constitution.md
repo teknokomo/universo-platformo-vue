@@ -1,10 +1,15 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.2.0 → 1.3.0 (Added package internal architecture patterns based on Vue/Django best practices)
+Version Change: 1.2.0 → 1.3.0 (Strengthened modular architecture requirements + Added package internal architecture patterns)
 Modified Principles:
-  - I. Added catalog-based dependency management pattern
+  - I. Enhanced with explicit MANDATORY modular architecture requirement and catalog-based dependency management pattern
   - II. Updated with specific Vue/Django tooling aligned with React version patterns
+  - Added CRITICAL REQUIREMENT section emphasizing ALL functionality in packages/
+  - Added explicit prohibition list for non-modular implementations
+  - Added reference to universo-platformo-react as required study
+  - Strengthened frontend/backend separation requirement
+  - Emphasized base/ directory requirement
   - X. Added internationalization architecture principle
   - XI. Added centralized shared packages principle
   - XII. Added build orchestration principle
@@ -14,13 +19,17 @@ Added Sections:
   - XI. Centralized Shared Packages
   - XII. Build Orchestration and Tooling
   - XIII. Package Internal Architecture Patterns (NEW in 1.3.0)
+  - Prohibited Practices (under Development Workflow)
+  - Explicit list of forbidden non-modular patterns
 Removed Sections: None
 Templates Status:
-  ✅ plan-template.md - Compatible with enhanced principles
-  ✅ spec-template.md - User stories and requirements align with expanded principles
-  ✅ tasks-template.md - Task structure supports principle-driven development
-Follow-up TODOs: None - all placeholders resolved
-Change Rationale: Added Principle XIII to establish mandatory patterns for internal package implementation based on Vue 3 Composition API and Django Service-Repository pattern best practices. This ensures consistent, maintainable, and testable code across all packages following framework-specific conventions.
+  ✅ plan-template.md - Compatible with enhanced principles and strengthened modular requirements
+  ✅ spec-template.md - User stories and requirements align with expanded principles and mandatory package structure
+  ✅ tasks-template.md - Task structure supports principle-driven development and enforces modular implementation
+Follow-up TODOs: 
+  - Update project initialization spec to reflect strengthened requirements (COMPLETED)
+  - Add modular architecture validation checklist (COMPLETED)
+Change Rationale: Combined two enhancements: (1) Added ABSOLUTE clarity that ALL functionality must be modular and in packages/, with explicit prohibition list - non-modular implementation is fundamentally incompatible with project's goal of extracting packages into separate repositories. (2) Added Principle XIII to establish mandatory patterns for internal package implementation based on Vue 3 Composition API and Django Service-Repository pattern best practices, ensuring consistent, maintainable, and testable code across all packages following framework-specific conventions.
 -->
 
 # Universo Platformo Vue Constitution
@@ -31,17 +40,29 @@ Change Rationale: Added Principle XIII to establish mandatory patterns for inter
 
 The project MUST be organized as a monorepo managed by PNPM workspace.
 
+**CRITICAL REQUIREMENT - MANDATORY MODULAR ARCHITECTURE**:
+**ALL functionality MUST be implemented in modular packages within the `packages/` directory. It is ABSOLUTELY FORBIDDEN to implement features outside of the package structure. The ONLY exceptions are:**
+- **Root-level build and startup configuration files** (package.json, pnpm-workspace.yaml, turbo.json, tsconfig.json, vite.config.ts, etc.)
+- **Root-level documentation** (README.md, README-RU.md, LICENSE, CONTRIBUTING.md)
+- **CI/CD configuration** (.github/workflows/)
+- **Development tooling configuration** (ESLint, Prettier, Git configs)
+
+**ALL other functionality including but not limited to business logic, UI components, API endpoints, database models, utilities, and type definitions MUST be organized into packages.**
+
 **Rules**:
-- All packages reside in `packages/` directory
+- All packages reside in `packages/` directory - NO EXCEPTIONS for feature code
 - Each package follows naming convention: `{feature}-frt` (frontend) or `{feature}-srv` (backend)
 - Package names MUST use @universo/ scoped naming in package.json (e.g., `@universo/clusters-frt`)
-- Each package contains a `base/` root directory to support future multiple implementations
+- Each package MUST contain a `base/` root directory to support future multiple implementations
+- Frontend and backend for the same feature MUST be separated into distinct packages (e.g., `packages/clusters-frt` and `packages/clusters-srv`)
 - PNPM workspace configuration includes both `packages/*` and `packages/*/base` patterns
 - Shared dependencies MUST use catalog-based version management in pnpm-workspace.yaml
 - Workspace dependencies referenced via `workspace:*` protocol
 - Shared dependencies are hoisted to root when appropriate
+- Reference implementation: Study https://github.com/teknokomo/universo-platformo-react for package organization patterns
+- Packages are designed for future extraction into separate repositories - maintain independence
 
-**Rationale**: Monorepo structure enables code sharing, consistent tooling, and atomic cross-package changes while PNPM provides efficient disk space usage and strict dependency resolution. Catalog-based dependency management ensures version consistency across all packages. Scoped package names prevent naming conflicts and enable future npm publishing.
+**Rationale**: Modular package architecture is ESSENTIAL for this project's long-term vision where packages will gradually be extracted into separate repositories. Monorepo structure enables code sharing, consistent tooling, and atomic cross-package changes while PNPM provides efficient disk space usage and strict dependency resolution. Catalog-based dependency management ensures version consistency across all packages. Scoped package names prevent naming conflicts and enable future npm publishing. The base/ directory structure supports multiple implementation variants of the same package.
 
 ### II. Technology Stack Consistency
 
@@ -351,6 +372,31 @@ Each package MUST follow technology-specific best practices for internal code or
 - **Documentation**: Public APIs must be documented
 - **Linting**: Code must pass ESLint (frontend) and Black/Flake8 (backend)
 - **Security**: No secrets in code, dependency scanning enabled
+- **Modular Architecture**: ALL feature code MUST be in packages/ directory (see Principle I)
+
+### Prohibited Practices
+
+**ABSOLUTE PROHIBITIONS** - These practices violate core architectural principles and are NEVER acceptable:
+
+1. **Non-Modular Implementation**: Implementing features outside the `packages/` directory structure
+   - ❌ FORBIDDEN: Creating business logic in root-level directories (src/, lib/, components/, api/, etc.)
+   - ❌ FORBIDDEN: Implementing features without proper package structure
+   - ❌ FORBIDDEN: Mixing frontend and backend code in a single package
+   - ✅ REQUIRED: All features in `packages/{feature}-frt/base/` and `packages/{feature}-srv/base/`
+
+2. **Skipping base/ Directory**: Creating packages without the base/ subdirectory
+   - ❌ FORBIDDEN: Direct implementation in `packages/{feature}-frt/src/`
+   - ✅ REQUIRED: Implementation in `packages/{feature}-frt/base/src/`
+
+3. **Ignoring Reference Implementation**: Failing to study universo-platformo-react patterns
+   - ❌ FORBIDDEN: Implementing without reviewing reference architecture
+   - ✅ REQUIRED: Study https://github.com/teknokomo/universo-platformo-react before implementing
+
+4. **Non-Separation of Concerns**: Combining frontend and backend in one package
+   - ❌ FORBIDDEN: `packages/clusters/` containing both frontend and backend
+   - ✅ REQUIRED: `packages/clusters-frt/` and `packages/clusters-srv/` as separate packages
+
+**Rationale**: These prohibitions protect the project's ability to extract packages into independent repositories in the future. Violating these principles creates technical debt that prevents the project from achieving its architectural goals.
 
 ## Governance
 
