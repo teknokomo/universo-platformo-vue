@@ -381,6 +381,35 @@ As a feature developer, I need a standardized i18n architecture so that I can ad
 - **FR-110**: Template package MUST provide reusable UI components (DataTable, ConfirmDialog, etc.)
 - **FR-111**: Template package MUST export factories for common patterns (form factories, dialog factories)
 
+#### Internal Package Architecture Requirements
+
+- **FR-112**: ALL feature functionality MUST be implemented in packages/ directory (non-modular implementation is PROHIBITED)
+- **FR-113**: Frontend packages (-frt) MUST use Vue 3 Composition API with `<script setup>` syntax
+- **FR-114**: Frontend packages MUST organize reusable logic into composables following use* naming convention
+- **FR-115**: Frontend package composables MUST return reactive refs/computed values, not raw values
+- **FR-116**: Frontend components MUST NOT contain business logic (business logic belongs in composables)
+- **FR-117**: Backend packages (-srv) MUST implement Service-Repository pattern
+- **FR-118**: Backend packages MUST place business logic ONLY in service layer, not in models or views
+- **FR-119**: Backend packages MUST use repository layer for all data access patterns
+- **FR-120**: Backend ViewSets MUST be thin and delegate to service layer
+- **FR-121**: Frontend packages MUST use @universo/api-client for all backend communication
+- **FR-122**: Backend packages MUST expose RESTful APIs following OpenAPI 3.0 specification
+- **FR-123**: All Python backend code MUST include type hints for functions and return values
+- **FR-124**: Frontend packages MUST NOT include hardcoded strings (all text through i18n)
+- **FR-125**: Backend packages MUST use select_related/prefetch_related to prevent N+1 query problems
+- **FR-126**: Package scaffolding MUST generate directory structure matching architecture patterns
+
+#### Prohibited Implementation Patterns
+
+- **FR-127**: Business logic MUST NOT be placed in Vue components (violation of architecture)
+- **FR-128**: Business logic MUST NOT be placed in Django models (violation of architecture)
+- **FR-129**: Business logic MUST NOT be placed in Django serializers (violation of architecture)
+- **FR-130**: Direct database access from Django views is PROHIBITED (must use services/repositories)
+- **FR-131**: Direct SQL queries are PROHIBITED (must use Django ORM)
+- **FR-132**: Hardcoded API URLs in frontend are PROHIBITED (must use api-client)
+- **FR-133**: Mixing Options API and Composition API in Vue is PROHIBITED
+- **FR-134**: Code placement outside packages/ directory is PROHIBITED (except root config files)
+
 ### Non-Functional Requirements
 
 - **NFR-001**: Monorepo MUST support scaling to 50-100 packages without significant performance degradation
@@ -420,6 +449,10 @@ As a feature developer, I need a standardized i18n architecture so that I can ad
 - **Build Pipeline**: Orchestrated build process managed by Turbo/Nx with dependency resolution and caching
 - **Entity**: Database model class with UUID primary key, timestamps, and ORM mappings
 - **Query Keys Factory**: Hierarchical key generation for TanStack Query cache management
+- **Composable**: Vue 3 reusable logic function following use* naming convention that returns reactive values
+- **Service Layer**: Backend business logic layer containing all domain logic and orchestration
+- **Repository Layer**: Backend data access layer encapsulating database queries and ORM operations
+- **ViewSet**: Django REST Framework endpoint handler that delegates to service layer (thin layer)
 
 ## Success Criteria *(mandatory)*
 
@@ -455,6 +488,15 @@ As a feature developer, I need a standardized i18n architecture so that I can ad
 - **SC-028**: Build orchestration successfully caches deterministic tasks and executes parallel builds where dependencies allow
 - **SC-029**: Catalog-based dependency management successfully enforces version consistency across all packages
 - **SC-030**: Documentation accurately reflects all architectural patterns from universo-platformo-react adapted to Vue/Django stack
+- **SC-031**: Package scaffolding generates frontend packages with Composition API structure (components/, composables/, pages/, api/, stores/)
+- **SC-032**: Package scaffolding generates backend packages with Service-Repository structure (models/, services/, repositories/, serializers/, views/)
+- **SC-033**: Code review of sample packages confirms NO business logic in Vue components (100% compliance)
+- **SC-034**: Code review of sample packages confirms NO business logic in Django models (100% compliance)
+- **SC-035**: Code review of sample packages confirms ALL business logic is in services layer (100% compliance)
+- **SC-036**: Frontend packages use composables for all reusable business logic with use* naming convention
+- **SC-037**: Backend packages implement repository methods for all data access patterns
+- **SC-038**: All prohibited patterns (FR-127 through FR-134) are documented and enforced in code reviews
+- **SC-039**: Constitution Principle XIII is implemented in all feature packages with 100% compliance
 
 ## Assumptions
 
