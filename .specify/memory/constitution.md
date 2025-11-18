@@ -1,24 +1,26 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Version Change: 1.1.0 → 1.2.0 (Enhanced based on universo-platformo-react analysis)
+Version Change: 1.2.0 → 1.3.0 (Added package internal architecture patterns based on Vue/Django best practices)
 Modified Principles:
   - I. Added catalog-based dependency management pattern
   - II. Updated with specific Vue/Django tooling aligned with React version patterns
   - X. Added internationalization architecture principle
   - XI. Added centralized shared packages principle
   - XII. Added build orchestration principle
+  - XIII. Added package internal architecture patterns principle (NEW in 1.3.0)
 Added Sections:
   - X. Internationalization Architecture
   - XI. Centralized Shared Packages
   - XII. Build Orchestration and Tooling
+  - XIII. Package Internal Architecture Patterns (NEW in 1.3.0)
 Removed Sections: None
 Templates Status:
   ✅ plan-template.md - Compatible with enhanced principles
   ✅ spec-template.md - User stories and requirements align with expanded principles
   ✅ tasks-template.md - Task structure supports principle-driven development
 Follow-up TODOs: None - all placeholders resolved
-Change Rationale: Enhanced constitution based on comprehensive analysis of universo-platformo-react repository, incorporating proven architectural patterns while adapting to Vue/Django stack
+Change Rationale: Added Principle XIII to establish mandatory patterns for internal package implementation based on Vue 3 Composition API and Django Service-Repository pattern best practices. This ensures consistent, maintainable, and testable code across all packages following framework-specific conventions.
 -->
 
 # Universo Platformo Vue Constitution
@@ -222,6 +224,61 @@ Build process MUST be efficient, cacheable, and support incremental compilation.
 
 **Rationale**: Build orchestration with caching dramatically improves developer experience by reducing wait times. Clear dependency graphs prevent build order issues. Incremental compilation and watch modes enable rapid iteration. Performance targets ensure the system remains manageable as it scales.
 
+### XIII. Package Internal Architecture Patterns
+
+Each package MUST follow technology-specific best practices for internal code organization.
+
+**Rules for Frontend Packages (-frt)**:
+- Use Vue 3 Composition API with `<script setup>` syntax as the default pattern
+- Organize code into composables for reusable logic (`composables/use*.ts` naming convention)
+- Store components in `components/` directory with PascalCase naming
+- Place page components in `pages/` or `views/` directory
+- API client methods belong in `api/` directory
+- Type definitions in `types/` directory (extending shared @universo/types)
+- i18n translations in `i18n/locales/{en,ru}/` directories
+- Composables MUST return reactive refs/computed values and expose clear interfaces
+- Component logic MUST be decoupled from business logic (use composables for business logic)
+- State management via Pinia stores in `stores/` directory (when global state needed)
+- Forms use VeeValidate with Zod schemas for validation
+- API calls use @tanstack/vue-query for data fetching with proper cache management
+- No hardcoded strings in components - all text MUST come from i18n
+
+**Rules for Backend Packages (-srv)**:
+- Follow Django Service-Repository pattern for business logic separation
+- Organize as Django app with standard structure: models/, services/, repositories/, serializers/, views/, tests/
+- Models contain ONLY data definitions and relationships (no business logic)
+- Services contain ALL business logic and orchestration
+- Repositories encapsulate data access patterns and complex queries
+- Serializers handle data transformation and validation
+- Views/ViewSets MUST be thin - delegate to services layer
+- Use Django REST Framework ViewSets for standard CRUD operations
+- Implement explicit service classes (e.g., `ClusterService`, `DomainService`)
+- Repository layer provides methods like `get_by_id()`, `save()`, `filter_by()`
+- Type hints required for all function signatures and return values
+- Database queries MUST use `select_related`/`prefetch_related` to prevent N+1 problems
+- All business logic MUST be testable independently of Django views
+
+**Rules for Package Interaction**:
+- Frontend packages MUST use @universo/api-client for backend communication
+- Backend packages MUST expose RESTful APIs following OpenAPI 3.0 specification
+- API endpoints MUST return consistent response formats (success/error envelopes)
+- Authentication tokens MUST be handled by interceptors in api-client
+- Error handling MUST be consistent across all packages
+- CORS configuration MUST be explicit in backend packages
+- API versioning MUST be used (e.g., `/api/v1/`) for all public endpoints
+
+**Prohibited Patterns**:
+- ❌ NO business logic in Vue components
+- ❌ NO business logic in Django models
+- ❌ NO business logic in Django serializers
+- ❌ NO direct database access from views
+- ❌ NO hardcoded API URLs (use api-client)
+- ❌ NO hardcoded strings in UI (use i18n)
+- ❌ NO mixing of Options API and Composition API in Vue
+- ❌ NO direct SQL queries (use ORM)
+
+**Rationale**: Consistent internal package architecture based on framework-specific best practices ensures maintainability, testability, and scalability. Service-Repository pattern in Django provides clear separation of concerns similar to industry-standard architectures. Vue Composition API with composables promotes code reuse and logical organization. These patterns are proven in production environments and align with the respective framework communities' recommended practices.
+
 ## Technology Constraints
 
 ### Frontend Technology
@@ -318,4 +375,4 @@ This constitution supersedes all other development practices and guides. Amendme
 
 **Specification Guidance**: Use `.specify/templates/` and related Spec Kit workflows for feature development guidance.
 
-**Version**: 1.2.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-16
+**Version**: 1.3.0 | **Ratified**: 2025-11-16 | **Last Amended**: 2025-11-18

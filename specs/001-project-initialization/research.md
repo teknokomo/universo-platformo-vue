@@ -814,12 +814,371 @@ export default i18n
 - Use project references for build optimization
 - Enable composite for incremental compilation
 
+### 10. Vue 3 Frontend Package Internal Structure
+
+**Decision**: Follow Vue 3 Composition API best practices with composables-first approach
+
+**Rationale**:
+- Composition API is the recommended approach for Vue 3 (replacing Options API)
+- Composables provide reusable, testable logic encapsulation
+- Better TypeScript integration and type inference
+- Clearer separation between UI and business logic
+- Aligns with modern Vue community standards
+
+**Directory Structure**:
+```
+packages/{feature}-frt/base/
+├── src/
+│   ├── components/          # UI components (PascalCase naming)
+│   │   ├── ClusterCard.vue
+│   │   ├── ClusterForm.vue
+│   │   └── ClusterList.vue
+│   ├── composables/         # Reusable logic (use* naming)
+│   │   ├── useClusters.ts   # Cluster business logic
+│   │   ├── useDomains.ts    # Domain business logic
+│   │   └── usePermissions.ts
+│   ├── pages/              # Route pages
+│   │   ├── ClustersPage.vue
+│   │   └── ClusterDetailPage.vue
+│   ├── api/                # API methods
+│   │   └── clusters.ts
+│   ├── stores/             # Pinia stores (global state only)
+│   │   └── useClustersStore.ts
+│   ├── types/              # Package-specific types
+│   │   └── cluster.ts
+│   ├── i18n/
+│   │   └── locales/
+│   │       ├── en/
+│   │       │   └── clusters.json
+│   │       └── ru/
+│   │           └── clusters.json
+│   └── index.ts            # Package exports
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
+```
+
+**Composables Pattern** (based on web search best practices):
+```typescript
+// composables/useClusters.ts
+import { ref, computed } from 'vue'
+import { useQuery, useMutation } from '@tanstack/vue-query'
+import { clustersApi } from '../api/clusters'
+
+export function useClusters() {
+  // Reactive state
+  const selectedClusterId = ref<string | null>(null)
+  
+  // Query for list
+  const { data: clusters, isLoading, error } = useQuery({
+    queryKey: ['clusters'],
+    queryFn: () => clustersApi.list()
+  })
+  
+  // Computed values
+  const selectedCluster = computed(() => 
+    clusters.value?.find(c => c.id === selectedClusterId.value)
+  )
+  
+  // Mutation for create
+  const createMutation = useMutation({
+    mutationFn: (data: ClusterInput) => clustersApi.create(data),
+    onSuccess: () => {
+      // Invalidate queries, show toast, etc.
+    }
+  })
+  
+  // Expose only what's needed
+  return {
+    clusters,
+    isLoading,
+    error,
+    selectedCluster,
+    selectCluster: (id: string) => { selectedClusterId.value = id },
+    createCluster: createMutation.mutate
+  }
+}
+```
+
+**Component Pattern**:
+```vue
+<script setup lang="ts">
+import { useClusters } from '../composables/useClusters'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
+const { clusters, isLoading, createCluster } = useClusters()
+
+// Component-specific UI logic only
+const handleSubmit = (data: ClusterInput) => {
+  createCluster(data)
+}
+</script>
+
+<template>
+  <div>
+    <h1>{{ t('clusters.title') }}</h1>
+    <ClusterList :clusters="clusters" :loading="isLoading" />
+  </div>
+</template>
+```
+
+**Best Practices**:
+- Use `<script setup>` syntax for cleaner code
+- Prefix composables with `use` (e.g., `useClusters`, `usePermissions`)
+- Composables return reactive refs/computed, not raw values
+- Keep components focused on presentation
+- Business logic stays in composables
+- No hardcoded strings - use i18n
+- Forms use VeeValidate + Zod schemas
+- API calls use @tanstack/vue-query for caching
+
+### 11. Django Backend Package Internal Structure
+
+**Decision**: Implement Service-Repository pattern for clean architecture
+
+**Rationale** (from web search and industry practices):
+- Separation of concerns: models, services, repositories, views
+- Business logic isolated from Django framework
+- Easier testing (mock repositories, not database)
+- Follows Domain-Driven Design principles
+- Widely adopted in production Django applications
+- Makes code more maintainable and scalable
+
+**Directory Structure**:
+```
+packages/{feature}-srv/base/
+└── {feature}/              # Django app
+    ├── __init__.py
+    ├── models/             # Data models only
+    │   ├── __init__.py
+    │   ├── cluster.py
+    │   ├── domain.py
+    │   └── resource.py
+    ├── services/           # Business logic
+    │   ├── __init__.py
+    │   ├── cluster_service.py
+    │   ├── domain_service.py
+    │   └── resource_service.py
+    ├── repositories/       # Data access patterns
+    │   ├── __init__.py
+    │   ├── cluster_repository.py
+    │   └── domain_repository.py
+    ├── serializers/        # DRF serializers
+    │   ├── __init__.py
+    │   ├── cluster_serializer.py
+    │   └── domain_serializer.py
+    ├── views/              # API endpoints (thin)
+    │   ├── __init__.py
+    │   ├── cluster_viewset.py
+    │   └── domain_viewset.py
+    ├── urls.py
+    ├── admin.py
+    ├── apps.py
+    ├── tests/
+    │   ├── test_models.py
+    │   ├── test_services.py
+    │   ├── test_repositories.py
+    │   └── test_views.py
+    └── migrations/
+```
+
+**Model Layer** (data definitions only):
+```python
+# models/cluster.py
+from django.db import models
+import uuid
+
+class Cluster(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'clusters'
+        ordering = ['-created_at']
+```
+
+**Repository Layer** (data access):
+```python
+# repositories/cluster_repository.py
+from typing import List, Optional
+from ..models import Cluster
+
+class ClusterRepository:
+    """Encapsulates data access for Cluster model"""
+    
+    def get_by_id(self, cluster_id: str) -> Optional[Cluster]:
+        return Cluster.objects.filter(id=cluster_id).first()
+    
+    def list_all(self) -> List[Cluster]:
+        return list(Cluster.objects.select_related('owner').all())
+    
+    def save(self, cluster: Cluster) -> Cluster:
+        cluster.save()
+        return cluster
+    
+    def delete(self, cluster: Cluster) -> None:
+        cluster.delete()
+    
+    def filter_by_owner(self, owner_id: str) -> List[Cluster]:
+        return list(Cluster.objects.filter(owner_id=owner_id))
+```
+
+**Service Layer** (business logic):
+```python
+# services/cluster_service.py
+from typing import List
+from ..repositories.cluster_repository import ClusterRepository
+from ..models import Cluster
+
+class ClusterService:
+    """Business logic for Cluster operations"""
+    
+    def __init__(self):
+        self.repository = ClusterRepository()
+    
+    def create_cluster(self, name: str, description: str, owner_id: str) -> Cluster:
+        """Create a new cluster with validation"""
+        # Business logic here
+        if not name or len(name) < 3:
+            raise ValueError("Cluster name must be at least 3 characters")
+        
+        cluster = Cluster(name=name, description=description, owner_id=owner_id)
+        return self.repository.save(cluster)
+    
+    def get_user_clusters(self, user_id: str) -> List[Cluster]:
+        """Get all clusters for a user"""
+        return self.repository.filter_by_owner(user_id)
+```
+
+**ViewSet Layer** (thin, delegates to service):
+```python
+# views/cluster_viewset.py
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from ..services.cluster_service import ClusterService
+from ..serializers import ClusterSerializer
+
+class ClusterViewSet(viewsets.ModelViewSet):
+    """API endpoints for Cluster"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = ClusterSerializer
+    service = ClusterService()
+    
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Delegate to service
+        cluster = self.service.create_cluster(
+            name=serializer.validated_data['name'],
+            description=serializer.validated_data.get('description', ''),
+            owner_id=request.user.id
+        )
+        
+        return Response(
+            ClusterSerializer(cluster).data,
+            status=status.HTTP_201_CREATED
+        )
+```
+
+**Best Practices**:
+- Models contain ONLY data definitions
+- Services contain ALL business logic
+- Repositories handle data access and complex queries
+- Views are thin - just serialize/deserialize and call services
+- Use type hints everywhere
+- Use `select_related`/`prefetch_related` in repositories
+- Service methods are independently testable
+- Follow Django REST Framework ViewSet patterns
+
+### 12. Frontend-Backend Integration Patterns
+
+**Decision**: Use centralized @universo/api-client with TanStack Query integration
+
+**Rationale**:
+- Type-safe API calls across all frontend packages
+- Consistent error handling
+- Automatic request/response interceptors
+- Built-in authentication token management
+- Cache management via TanStack Query
+- Single source of truth for API endpoints
+
+**API Client Structure**:
+```typescript
+// @universo/api-client/src/clients/clusters.ts
+import { apiClient } from '../core/client'
+import type { Cluster, ClusterInput } from '@universo/types'
+
+export const clustersApi = {
+  list: () => apiClient.get<Cluster[]>('/api/v1/clusters/'),
+  
+  get: (id: string) => apiClient.get<Cluster>(`/api/v1/clusters/${id}/`),
+  
+  create: (data: ClusterInput) => 
+    apiClient.post<Cluster>('/api/v1/clusters/', data),
+  
+  update: (id: string, data: Partial<ClusterInput>) =>
+    apiClient.patch<Cluster>(`/api/v1/clusters/${id}/`, data),
+  
+  delete: (id: string) => apiClient.delete(`/api/v1/clusters/${id}/`)
+}
+
+// Query keys for cache management
+export const clustersQueryKeys = {
+  all: ['clusters'] as const,
+  lists: () => [...clustersQueryKeys.all, 'list'] as const,
+  list: (filters: string) => [...clustersQueryKeys.lists(), { filters }] as const,
+  details: () => [...clustersQueryKeys.all, 'detail'] as const,
+  detail: (id: string) => [...clustersQueryKeys.details(), id] as const,
+}
+```
+
+**Integration in Frontend**:
+```typescript
+// packages/clusters-frt/src/composables/useClusters.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
+import { clustersApi, clustersQueryKeys } from '@universo/api-client'
+
+export function useClusters() {
+  const queryClient = useQueryClient()
+  
+  const { data, isLoading, error } = useQuery({
+    queryKey: clustersQueryKeys.lists(),
+    queryFn: () => clustersApi.list()
+  })
+  
+  const createMutation = useMutation({
+    mutationFn: clustersApi.create,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: clustersQueryKeys.lists() })
+    }
+  })
+  
+  return { clusters: data, isLoading, error, createCluster: createMutation.mutate }
+}
+```
+
+**Best Practices**:
+- All API calls go through @universo/api-client
+- Use hierarchical query keys for cache management
+- Implement automatic token refresh in interceptors
+- Normalize error responses
+- Use consistent response envelopes
+- API versioning in URLs (/api/v1/)
+
 ## Research Summary
 
 This research phase incorporated the latest 2024 best practices from:
-1. **Internet sources**: Vue 3 Composition API patterns, Django REST Framework design principles, PNPM/Turborepo monorepo strategies
+1. **Internet sources**: Vue 3 Composition API patterns, Django REST Framework design principles, PNPM/Turborepo monorepo strategies, Service-Repository pattern implementation
 2. **Context7 documentation**: Official Vue 3 docs, Django 4.2 docs, Vuetify 3 configuration patterns
-3. **Community best practices**: DEV.to guides, CodezUp tutorials, production-ready templates
+3. **Community best practices**: DEV.to guides, CodezUp tutorials, production-ready templates, Cosmic Python patterns
 
 Key enhancements to the original research:
 - Advanced Vue 3 Composition API patterns with TypeScript
@@ -828,12 +1187,21 @@ Key enhancements to the original research:
 - Enhanced monorepo structure with apps/ and packages/ separation
 - Package-level i18n architecture with namespace registration
 - Comprehensive TypeScript configuration hierarchy
+- **NEW**: Detailed internal package architecture patterns for frontend and backend
+- **NEW**: Frontend-backend integration patterns with type-safe API client
+- **NEW**: Composables-first approach for Vue 3
+- **NEW**: Service-Repository pattern for Django
 
 All findings align with and enhance the existing research without contradicting the core architectural decisions.
 
 ## Open Questions
 
-No open questions remaining. All technical decisions have been researched and validated against 2024 best practices.
+No open questions remaining. All technical decisions have been researched and validated against 2024 best practices, including:
+- ✅ Internal package structure for frontend (-frt packages)
+- ✅ Internal package structure for backend (-srv packages)
+- ✅ Integration patterns between frontend and backend
+- ✅ Best practices for Vue 3 Composition API
+- ✅ Best practices for Django Service-Repository pattern
 
 ## Next Steps
 

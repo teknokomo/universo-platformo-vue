@@ -46,6 +46,11 @@ Initialize Universo Platformo Vue repository with monorepo structure using PNPM 
 - Package naming convention: @universo/{name}-frt/-srv with base/ directories
 - No docs/ directory in repository (separate docs repo in future)
 - No AI agent configuration files in root (user-created)
+- Frontend packages MUST use Composition API with composables pattern
+- Backend packages MUST use Service-Repository pattern
+- ALL functionality MUST be in packages/ (modular architecture is mandatory)
+- Frontend and backend MUST be separate packages for each feature
+- Non-modular implementation is PROHIBITED
 
 **Scale/Scope**: 
 - Initial setup: 5-10 shared packages (@universo/types, utils, i18n, api-client, template-vue)
@@ -93,7 +98,10 @@ Initialize Universo Platformo Vue repository with monorepo structure using PNPM 
 ### Principle XII: Build Orchestration and Tooling
 ✅ **PASS** - Turborepo/Nx for build orchestration with caching
 
-**Overall Assessment**: PASS with one adaptation (Principle IV modified appropriately for Django)
+### Principle XIII: Package Internal Architecture Patterns
+✅ **PASS** - Vue 3 Composition API with composables pattern for frontend; Django Service-Repository pattern for backend; centralized API client for integration
+
+**Overall Assessment**: PASS with one adaptation (Principle IV modified appropriately for Django backend stack). All principles including the new Principle XIII for internal package architecture are addressed.
 
 ## Project Structure
 
