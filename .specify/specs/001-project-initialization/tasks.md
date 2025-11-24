@@ -591,7 +591,7 @@ If time/resources permit:
 
 #### 2. Core Domain Features (006-009) - Platform Entities
 
-**006-uniks** → Workspace management (analogous to "Unics" in Russian)  
+**006-uniks** → Workspace management (Russian: "Уники" / Unics, not Unix)  
 **Packages to create**:
 - `@universo/uniks-frt` - Workspace listing, creation, member management UI
 - `@universo/uniks-srv` - Workspace backend with CRUD operations
@@ -721,7 +721,7 @@ If time/resources permit:
 **Packages to create**:
 - `@universo/template-arjs` - AR.js quiz and educational content templates
 
-**Reference**: `template-quiz/` in universo-platformo-react  
+**Reference**: `template-quiz/` in universo-platformo-react (naming will be clarified to template-arjs in Vue version)  
 **Priority**: P2 - AR content creation  
 **Dependencies**: 016-publish, 013-updl
 
@@ -731,7 +731,7 @@ If time/resources permit:
 **Packages to create**:
 - `@universo/template-playcanvas` - PlayCanvas space MMO templates
 
-**Reference**: `template-mmoomm/` in universo-platformo-react  
+**Reference**: `template-mmoomm/` in universo-platformo-react (MMOOMM = space MMO game, will be clarified to template-playcanvas in Vue version)  
 **Priority**: P2 - 3D/VR content creation  
 **Dependencies**: 016-publish, 013-updl
 
