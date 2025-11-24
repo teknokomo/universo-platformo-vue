@@ -165,5 +165,5 @@ This checklist MUST be verified before any implementation is considered complete
 **Last Updated**: 2025-11-17  
 **Related Documents**: 
 - `.specify/memory/constitution.md` (v1.3.0+)
-- `specs/001-project-initialization/spec.md` (FR-000-MODULAR requirements)
-- `specs/001-project-initialization/plan.md` (Constitution Check section)
+- `.specify/specs/001-project-initialization/spec.md` (FR-000-MODULAR requirements)
+- `.specify/specs/001-project-initialization/plan.md` (Constitution Check section)

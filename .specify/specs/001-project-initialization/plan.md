@@ -1,7 +1,7 @@
 # Implementation Plan: Universo Platformo Vue Project Initialization
 
 **Branch**: `001-project-initialization` | **Date**: 2025-11-17 | **Spec**: [spec.md](spec.md)
-**Input**: Feature specification from `/specs/001-project-initialization/spec.md`
+**Input**: Feature specification from `/.specify/specs/001-project-initialization/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 

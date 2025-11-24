@@ -165,5 +165,5 @@
 **Последнее обновление**: 2025-11-17  
 **Связанные документы**: 
 - `.specify/memory/constitution.md` (v1.3.0+)
-- `specs/001-project-initialization/spec.md` (требования FR-000-MODULAR)
-- `specs/001-project-initialization/plan.md` (секция проверки конституции)
+- `.specify/specs/001-project-initialization/spec.md` (требования FR-000-MODULAR)
+- `.specify/specs/001-project-initialization/plan.md` (секция проверки конституции)

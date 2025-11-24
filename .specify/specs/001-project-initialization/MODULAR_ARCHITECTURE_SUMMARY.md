@@ -35,7 +35,7 @@ It is ABSOLUTELY FORBIDDEN to implement features outside of the package structur
 
 ### 2. Specification Updated
 
-**File**: `specs/001-project-initialization/spec.md`
+**File**: `.specify/specs/001-project-initialization/spec.md`
 
 **Changes**:
 - Added new clarification section (Session 2025-11-17) emphasizing modular architecture
@@ -58,7 +58,7 @@ It is ABSOLUTELY FORBIDDEN to implement features outside of the package structur
 
 ### 3. Plan Enhanced
 
-**File**: `specs/001-project-initialization/plan.md`
+**File**: `.specify/specs/001-project-initialization/plan.md`
 
 **Changes**:
 - Expanded Constitution Check section
@@ -69,8 +69,8 @@ It is ABSOLUTELY FORBIDDEN to implement features outside of the package structur
 ### 4. Modular Architecture Checklist Created (Bilingual)
 
 **Files**: 
-- `specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST.md` (English)
-- `specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST-RU.md` (Russian)
+- `.specify/specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST.md` (English)
+- `.specify/specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST-RU.md` (Russian)
 
 **Content**:
 - Comprehensive checklist with 100+ validation points
@@ -129,10 +129,10 @@ Before any implementation:
 
 ```
 .specify/memory/constitution.md (v1.3.0)
-specs/001-project-initialization/spec.md
-specs/001-project-initialization/plan.md
-specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST.md (NEW)
-specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST-RU.md (NEW)
+.specify/specs/001-project-initialization/spec.md
+.specify/specs/001-project-initialization/plan.md
+.specify/specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST.md (NEW)
+.specify/specs/001-project-initialization/MODULAR_ARCHITECTURE_CHECKLIST-RU.md (NEW)
 ```
 
 ## Next Steps

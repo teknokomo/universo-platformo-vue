@@ -1,7 +1,7 @@
 # Tasks: Universo Platformo Vue Project Initialization
 
 **Feature Branch**: `001-project-initialization`  
-**Input**: Design documents from `/specs/001-project-initialization/`  
+**Input**: Design documents from `/.specify/specs/001-project-initialization/`  
 **Prerequisites**: plan.md, spec.md, data-model.md, research.md, contracts/
 
 **Note**: Tests are NOT requested in the specification, so test tasks are not included.
