@@ -119,10 +119,10 @@ As a developer, I need basic configuration files and setup for reactive frontend
 
 **Acceptance Scenarios**:
 
-1. **Given** the repository, **When** checking for frontend configuration, **Then** appropriate files exist for reactive component framework project setup with type safety
-2. **Given** the repository, **When** checking for backend configuration, **Then** appropriate files exist for API framework setup with ORM and dependency management
-3. **Given** the technology stack, **When** reviewing database configuration, **Then** documentation indicates the primary database platform with extensibility for other databases in the future
-4. **Given** the authentication setup, **When** reviewing configuration, **Then** documentation indicates the authentication pattern with database connector support
+1. **Given** the repository, **When** checking for frontend configuration, **Then** the following files exist per FR-052: package.json, tsconfig.json, vite.config.ts, eslint.config.js, .env.example
+2. **Given** the repository, **When** checking for backend configuration, **Then** the following files exist per FR-053: pyproject.toml or requirements.txt, .env.example, Django settings structure
+3. **Given** the technology stack, **When** reviewing database configuration, **Then** documentation indicates the primary database platform (Supabase/PostgreSQL) with extensibility for other databases in the future
+4. **Given** the authentication setup, **When** reviewing configuration, **Then** documentation indicates the authentication pattern (Django JWT with djangorestframework-simplejwt) with database connector support
 
 ---
 
