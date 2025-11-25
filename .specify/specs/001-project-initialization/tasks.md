@@ -262,8 +262,8 @@
 
 ### Implementation for User Story 7
 
-- [ ] T117 [US7] Create reference implementation tracking guide at /docs/reference-tracking.md
-- [ ] T118 [US7] Create reference implementation tracking guide (Russian) at /docs/reference-tracking-RU.md
+- [ ] T117 [US7] Create reference implementation tracking guide at /REFERENCE-TRACKING.md
+- [ ] T118 [US7] Create reference implementation tracking guide (Russian) at /REFERENCE-TRACKING-RU.md
 - [ ] T119 [US7] Document feature evaluation criteria (maturity, completion, legacy assessment)
 - [ ] T120 [US7] Document React/Express to Vue/Django adaptation guidelines
 - [ ] T121 [US7] Document patterns to adopt (monorepo structure, package organization, entity models)
@@ -293,8 +293,10 @@
 - [ ] T136 Create LICENSE file (MIT) at /LICENSE
 - [ ] T137 Update root README.md with quickstart links and badge status
 - [ ] T138 Update root README-RU.md with identical content in Russian
-- [ ] T139 Verify all constitution principles are implemented (Constitution Check)
-- [ ] T140 Run quickstart.md validation (manual test following quickstart guide)
+- [ ] T139 [P] Verify .gitignore includes security patterns (.env*, *credentials*, *secret*)
+- [ ] T140 [P] Document security best practices in CONTRIBUTING.md (FR-034-038 compliance)
+- [ ] T141 Verify all constitution principles are implemented (Constitution Check)
+- [ ] T142 Run quickstart.md validation (manual test following quickstart guide)
 
 ---
 
@@ -448,7 +450,7 @@ If time/resources permit:
 
 ## Task Summary
 
-**Total Tasks**: 140
+**Total Tasks**: 142
 
 **By Phase**:
 - Phase 1 (Setup): 9 tasks
@@ -462,13 +464,13 @@ If time/resources permit:
 - Phase 9 (US4 - P2): 11 tasks
 - Phase 10 (US5 - P3): 7 tasks
 - Phase 11 (US7 - P3): 9 tasks
-- Phase 12 (Polish): 15 tasks
+- Phase 12 (Polish): 17 tasks (includes security verification)
 
 **By Priority**:
 - P1 (MVP - Critical): 51 tasks across 3 user stories (US1, US2, US8)
 - P2 (Important): 49 tasks across 4 user stories (US3, US9, US6, US4)
 - P3 (Optional): 16 tasks across 2 user stories (US5, US7)
-- Infrastructure: 24 tasks (Setup + Foundational + Polish)
+- Infrastructure: 26 tasks (Setup + Foundational + Polish)
 
 **Parallel Opportunities Identified**:
 - Setup phase: 6 tasks can run in parallel (T002-T007)
