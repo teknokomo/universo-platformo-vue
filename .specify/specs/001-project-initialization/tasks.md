@@ -532,3 +532,301 @@ If time/resources permit:
 **Critical path**: Setup (Phase 1) → Foundational (Phase 2) → US8 Shared Packages (Phase 5) - these block most other work
 
 **Quick wins**: US1 (documentation) and US2 (workspace config) can be completed quickly alongside US8 to show early progress
+
+---
+
+## Feature Implementation Roadmap
+
+**Context**: This tasks.md covers **ONLY** the 001-project-initialization feature (repository setup). The following roadmap outlines the **progressive feature implementation** that will follow, each as a separate feature specification with its own tasks.md.
+
+**Reference**: Each feature below corresponds to packages in [universo-platformo-react](https://github.com/teknokomo/universo-platformo-react/tree/main/packages) but will be implemented with **optimal modular structure** from the start (avoiding legacy monolithic code).
+
+### Phase Order: Progressive Feature Implementation
+
+#### 1. Foundation Features (002-005) - Core Platform Infrastructure
+
+**002-authentication** → Authentication system with session management  
+**Packages to create**:
+- `@universo/auth-frt` - Authentication UI components (LoginForm, SessionGuard, hooks)
+- `@universo/auth-srv` - Django JWT authentication backend with Supabase integration
+
+**Reference**: `auth-frt/`, `auth-srv/` in universo-platformo-react  
+**Priority**: P1 - Required for all other features  
+**Dependencies**: 001-project-initialization complete
+
+---
+
+**003-profile** → User profile management  
+**Packages to create**:
+- `@universo/profile-frt` - Profile UI with email/password update
+- `@universo/profile-srv` - Profile backend with secure data management
+
+**Reference**: `profile-frt/`, `profile-srv/` in universo-platformo-react  
+**Priority**: P1 - Core user functionality  
+**Dependencies**: 002-authentication
+
+---
+
+**004-organizations** → Organization and team management  
+**Packages to create**:
+- `@universo/organizations-frt` - Organization management UI
+- `@universo/organizations-srv` - Organization backend with member management
+
+**Reference**: `organizations-frt/`, `organizations-srv/` in universo-platformo-react  
+**Priority**: P2 - Multi-tenant support  
+**Dependencies**: 002-authentication, 003-profile
+
+---
+
+**005-storages** → Storage management and file handling  
+**Packages to create**:
+- `@universo/storages-frt` - Storage UI for file management
+- `@universo/storages-srv` - Storage backend with cloud integration
+
+**Reference**: `storages-frt/`, `storages-srv/` in universo-platformo-react  
+**Priority**: P2 - Asset management  
+**Dependencies**: 002-authentication
+
+---
+
+#### 2. Core Domain Features (006-009) - Platform Entities
+
+**006-uniks** → Workspace management (Russian: "Уники" / Unics, not Unix)  
+**Packages to create**:
+- `@universo/uniks-frt` - Workspace listing, creation, member management UI
+- `@universo/uniks-srv` - Workspace backend with CRUD operations
+
+**Reference**: `uniks-frt/`, `uniks-srv/` in universo-platformo-react  
+**Priority**: P1 - Core workspace functionality  
+**Dependencies**: 002-authentication, 003-profile
+
+---
+
+**007-clusters** → Cluster management for organizing resources  
+**Packages to create**:
+- `@universo/clusters-frt` - Cluster management UI
+- `@universo/clusters-srv` - Cluster backend with domain management
+
+**Reference**: `clusters-frt/`, `clusters-srv/` in universo-platformo-react  
+**Priority**: P2 - Resource organization  
+**Dependencies**: 006-uniks
+
+---
+
+**008-metaverses** → Metaverse creation and management  
+**Packages to create**:
+- `@universo/metaverses-frt` - Metaverse UI with creation/navigation
+- `@universo/metaverses-srv` - Metaverse backend with data management
+
+**Reference**: `metaverses-frt/`, `metaverses-srv/` in universo-platformo-react  
+**Priority**: P1 - Core platform entity  
+**Dependencies**: 006-uniks, 007-clusters
+
+---
+
+**009-projects** → Project management within workspaces  
+**Packages to create**:
+- `@universo/projects-frt` - Project management UI
+- `@universo/projects-srv` - Project backend
+
+**Reference**: `projects-frt/`, `projects-srv/` in universo-platformo-react  
+**Priority**: P2 - Project organization  
+**Dependencies**: 006-uniks
+
+---
+
+#### 3. Visual Programming System (010-012) - Spaces & Canvases
+
+**010-spaces** → Canvas/Flow/Space management (graph-based workflows)  
+**Packages to create**:
+- `@universo/spaces-frt` - Canvas UI with Vue Flow integration
+- `@universo/spaces-srv` - Space backend with flow data management
+
+**Reference**: `spaces-frt/`, `spaces-srv/` in universo-platformo-react  
+**Priority**: P1 - Core visual programming interface  
+**Dependencies**: 006-uniks, 008-metaverses
+
+---
+
+**011-space-builder** → AI-powered Space Builder (prompt-to-flow)  
+**Packages to create**:
+- `@universo/space-builder-frt` - Prompt dialog UI with model selection
+- `@universo/space-builder-srv` - LLM integration backend for flow generation
+
+**Reference**: `space-builder-frt/`, `space-builder-srv/` in universo-platformo-react  
+**Priority**: P2 - AI-assisted development  
+**Dependencies**: 010-spaces
+
+---
+
+**012-analytics** → Analytics and metrics  
+**Packages to create**:
+- `@universo/analytics-frt` - Analytics dashboard and visualization
+
+**Reference**: `analytics-frt/` in universo-platformo-react  
+**Priority**: P3 - Data insights  
+**Dependencies**: 010-spaces
+
+---
+
+#### 4. Node System & Libraries (013-015) - Extensibility
+
+**013-updl** → Universal Platform Definition Language (core node system)  
+**Packages to create**:
+- `@universo/updl` - UPDL node definitions, interfaces, and icons for 3D/AR/VR spaces
+
+**Reference**: `updl/base/` in universo-platformo-react  
+**Note**: Currently has legacy code from Flowise - implement **clean UPDL-only nodes**  
+**Priority**: P1 - Foundation for all visual content  
+**Dependencies**: 010-spaces
+
+---
+
+**014-flowise-components** → LangChain and AI node library  
+**Packages to create**:
+- `@universo/langchain-nodes` - LangChain node implementations (split from monolithic flowise-components)
+- Individual node category packages as needed (chat, agents, tools, etc.)
+
+**Reference**: `flowise-components/` in universo-platformo-react  
+**Note**: Current React version is **monolithic** - split into **focused packages** in Vue version  
+**Priority**: P2 - AI/ML functionality  
+**Dependencies**: 013-updl, 010-spaces
+
+---
+
+**015-custom-nodes** → Custom node development framework  
+**Packages to create**:
+- `@universo/node-sdk` - SDK for creating custom nodes
+- Documentation and templates for node developers
+
+**Priority**: P3 - Extensibility framework  
+**Dependencies**: 013-updl, 014-flowise-components
+
+---
+
+#### 5. Publishing & Export (016-018) - Content Distribution
+
+**016-publish** → Publication and export system  
+**Packages to create**:
+- `@universo/publish-frt` - Publication UI with UPDL processing
+- `@universo/publish-srv` - Publication backend serving flow data
+
+**Reference**: `publish-frt/`, `publish-srv/` in universo-platformo-react  
+**Priority**: P1 - Content sharing  
+**Dependencies**: 013-updl, 010-spaces
+
+---
+
+**017-template-arjs** → AR.js template for AR experiences  
+**Packages to create**:
+- `@universo/template-arjs` - AR.js quiz and educational content templates
+
+**Reference**: `template-quiz/` in universo-platformo-react (naming will be clarified to template-arjs in Vue version)  
+**Priority**: P2 - AR content creation  
+**Dependencies**: 016-publish, 013-updl
+
+---
+
+**018-template-playcanvas** → PlayCanvas template for 3D/VR  
+**Packages to create**:
+- `@universo/template-playcanvas` - PlayCanvas space MMO templates
+
+**Reference**: `template-mmoomm/` in universo-platformo-react (MMOOMM = space MMO game, will be clarified to template-playcanvas in Vue version)  
+**Priority**: P2 - 3D/VR content creation  
+**Dependencies**: 016-publish, 013-updl
+
+---
+
+#### 6. Advanced Features (019-020) - Multiplayer & Real-time
+
+**019-multiplayer** → Real-time multiplayer infrastructure  
+**Packages to create**:
+- `@universo/multiplayer-colyseus-srv` - Colyseus server for real-time networking
+- Integration packages for connecting to templates
+
+**Reference**: `multiplayer-colyseus-srv/` in universo-platformo-react  
+**Priority**: P3 - Multiplayer experiences  
+**Dependencies**: 018-template-playcanvas
+
+---
+
+**020-rest-docs** → API documentation  
+**Packages to create**:
+- `@universo/rest-docs` - OpenAPI/Swagger documentation server
+
+**Reference**: `universo-rest-docs/` in universo-platformo-react  
+**Priority**: P3 - Developer experience  
+**Dependencies**: All backend packages
+
+---
+
+### Implementation Strategy
+
+**MVP Scope** (Phases 1-3):
+1. 001-project-initialization (Current)
+2. 002-authentication
+3. 006-uniks
+4. 008-metaverses
+5. 010-spaces
+6. 013-updl
+7. 016-publish
+
+**Total**: ~7 features for initial platform launch
+
+**Full Platform** (All 20 Features):
+- Complete implementation following progressive roadmap
+- Each feature as independent spec with its own tasks.md
+- Incremental delivery with continuous validation
+
+**Key Principle**: **Optimal modular structure from the start** - avoid monolithic packages like current `flowise-components`, `flowise-server`, `flowise-ui`. Each feature gets dedicated -frt/-srv packages.
+
+---
+
+### Package Naming Alignment
+
+Current universo-platformo-react uses mixed naming:
+- ✅ Good: `@universo/` scoped packages (types, utils, i18n, api-client, template-mui)
+- ✅ Good: `-frt/-srv` separation (auth, clusters, metaverses, uniks, spaces, profile, etc.)
+- ⚠️ Legacy: `flowise-*` packages (will be renamed/split)
+
+**Universo Platformo Vue will use consistent naming**:
+- All packages: `@universo/{name}` scope
+- Feature packages: `@universo/{name}-frt` and `@universo/{name}-srv`
+- Shared packages: `@universo/{name}` (no suffix)
+- No `flowise-` prefix (use LangChain/AI-specific names instead)
+
+---
+
+### Critical Differences from Reference Implementation
+
+**What to replicate**:
+- ✅ Monorepo structure with PNPM
+- ✅ Package-based modularity with -frt/-srv separation
+- ✅ base/ directory pattern
+- ✅ Bilingual documentation (EN/RU)
+- ✅ Entity models and relationships
+- ✅ UPDL node system architecture
+- ✅ Template package pattern
+
+**What to improve/avoid**:
+- ❌ Don't replicate: Monolithic `flowise-components` (100+ nodes in one package)
+- ❌ Don't replicate: Legacy Flowise code mixed with UPDL
+- ❌ Don't replicate: Incomplete/experimental features
+- ✅ Do improve: Split large packages into focused ones
+- ✅ Do improve: Clean separation of concerns from day one
+- ✅ Do improve: Comprehensive testing from start
+
+---
+
+## Summary
+
+This roadmap provides the **strategic vision** for progressive feature implementation following initialization. Each numbered feature (002-020) will become a separate specification with its own detailed tasks.md following the same structure as this document.
+
+**Next Steps After Completing 001-project-initialization**:
+1. Create `specs/002-authentication/spec.md` with user stories for auth system
+2. Run `/speckit.plan` to generate plan.md, research.md, data-model.md
+3. Run `/speckit.tasks` to generate tasks.md for authentication
+4. Implement, test, and deploy authentication
+5. Move to next feature in roadmap
+
+**Reference Study**: Before implementing each feature, study the corresponding packages in [universo-platformo-react](https://github.com/teknokomo/universo-platformo-react/tree/main/packages) to understand the domain and patterns, then implement with Vue/Django best practices.
