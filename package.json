@@ -1,0 +1,17 @@
+{
+    "name": "universo-platformo-vue",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Universo Platformo / Universo MMOOMM built on Vue 3 / Django / TypeScript",
+    "scripts": {
+        "dev": "pnpm --filter @universo/app dev",
+        "build": "pnpm --filter @universo/app build",
+        "preview": "pnpm --filter @universo/app preview",
+        "lint": "pnpm -r lint",
+        "type-check": "pnpm -r type-check"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    }
+}

@@ -1,0 +1,27 @@
+{
+    "hero": {
+        "titlePrefix": "Discover",
+        "titleHighlight": "all worlds",
+        "description": "Universo Platformo — a universal platform connecting global projects, campaigns and communities.",
+        "button": "To the future"
+    },
+    "footer": {
+        "owner": "Telegram: {'@'}diverslaboristo",
+        "email": "info{'@'}universo.space",
+        "termsOfService": "Terms of Service",
+        "privacyPolicy": "Privacy Policy"
+    },
+    "testimonials": {
+        "title": "What users say",
+        "items": [
+            { "text": "Universo Platformo changed how I collaborate on global projects.", "author": "Alice K.", "role": "Researcher" },
+            { "text": "Finally a place where all my interests are in one place.", "author": "Bob M.", "role": "Activist" },
+            { "text": "The onboarding is smooth and the community is incredible.", "author": "Carlos R.", "role": "Developer" },
+            { "text": "A genuine digital ecosystem that scales to any need.", "author": "Diana S.", "role": "Designer" }
+        ]
+    },
+    "nav": {
+        "login": "Login",
+        "logout": "Logout"
+    }
+}

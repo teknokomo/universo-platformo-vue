@@ -1,0 +1,40 @@
+{
+    "name": "@universo/start-frontend",
+    "version": "0.1.0",
+    "description": "Vue start page module for Universo Platformo",
+    "type": "module",
+    "main": "./src/index.ts",
+    "module": "./src/index.ts",
+    "types": "./src/index.ts",
+    "exports": {
+        ".": {
+            "types": "./src/index.ts",
+            "import": "./src/index.ts",
+            "require": "./src/index.ts"
+        },
+        "./package.json": "./package.json"
+    },
+    "files": ["src"],
+    "scripts": {
+        "lint": "vue-tsc --noEmit",
+        "type-check": "vue-tsc --noEmit"
+    },
+    "keywords": ["universo", "start", "onboarding", "vue"],
+    "author": "Universo Platformo",
+    "license": "Omsk Open License",
+    "dependencies": {
+        "@universo/auth-frontend": "workspace:*",
+        "axios": "^1.6.0",
+        "vue": "^3.4.0",
+        "vue-i18n": "^9.13.0",
+        "vue-router": "^4.3.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.4.0",
+        "vue-tsc": "^2.0.0"
+    },
+    "peerDependencies": {
+        "vue": "^3.4.0"
+    }
+}
