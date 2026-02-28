@@ -82,13 +82,16 @@ const handleNext = async () => {
         } finally {
             isSaving.value = false
         }
+
+        // Wizard is logically complete after saving the final step.
+        // Notify parent instead of advancing into the completion step,
+        // which would be immediately unmounted by the parent.
+        emit('complete')
+        return
     }
 
     if (activeStep.value < STEPS.length - 1) {
         activeStep.value++
-        if (STEPS[activeStep.value] === 'completion') {
-            emit('complete')
-        }
     }
 }
 
