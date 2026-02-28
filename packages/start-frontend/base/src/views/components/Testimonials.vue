@@ -2,6 +2,7 @@
 /**
  * Testimonials - Grid of user testimonial cards
  */
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { t, tm } = useI18n()
@@ -12,7 +13,7 @@ interface TestimonialItem {
     role: string
 }
 
-const items = tm('testimonials.items') as TestimonialItem[]
+const items = computed(() => tm('testimonials.items') as TestimonialItem[])
 </script>
 
 <template>

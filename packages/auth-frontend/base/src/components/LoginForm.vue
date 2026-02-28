@@ -44,26 +44,26 @@ const handleSubmit = async () => {
 <template>
     <form class="login-form" @submit.prevent="handleSubmit">
         <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email">{{ t('auth.emailLabel') }}</label>
             <input
                 id="email"
                 v-model="email"
                 type="email"
                 autocomplete="email"
                 required
-                placeholder="you@example.com"
+                :placeholder="t('auth.emailPlaceholder')"
             />
         </div>
 
         <div class="form-group">
-            <label for="password">Password</label>
+            <label for="password">{{ t('auth.passwordLabel') }}</label>
             <input
                 id="password"
                 v-model="password"
                 type="password"
                 autocomplete="current-password"
                 required
-                placeholder="••••••••"
+                :placeholder="t('auth.passwordPlaceholder')"
             />
         </div>
 

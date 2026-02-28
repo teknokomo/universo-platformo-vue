@@ -14,6 +14,11 @@ import { useOnboardingApi } from '../composables/useOnboardingApi'
 const { getOnboardingItems } = useOnboardingApi()
 const { t } = useI18n()
 
+const handleImageError = (event: Event) => {
+    const img = event.target as HTMLElement
+    img.style.display = 'none'
+}
+
 const isReady = ref(false)
 const onboardingCompleted = ref<boolean | null>(null)
 
@@ -48,7 +53,7 @@ const handleStartOver = () => {
         <template v-else-if="onboardingCompleted">
             <div class="page-content">
                 <div class="completion-card">
-                    <img src="/background-image.jpg" alt="Universo Platformo" class="completion-image" onerror="this.style.display='none'" />
+                    <img src="/background-image.jpg" alt="Universo Platformo" class="completion-image" @error="handleImageError" />
                     <h2 class="completion-title">{{ t('completed.title') }}</h2>
                     <p class="completion-text">{{ t('completed.description') }}</p>
                     <div class="completion-notice">

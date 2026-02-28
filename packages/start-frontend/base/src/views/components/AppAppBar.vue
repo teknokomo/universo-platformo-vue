@@ -43,7 +43,7 @@ const handleLogout = async () => {
             </nav>
 
             <!-- Mobile hamburger -->
-            <button class="hamburger" :aria-expanded="mobileMenuOpen" @click="mobileMenuOpen = !mobileMenuOpen">
+            <button class="hamburger" :aria-label="mobileMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')" :aria-expanded="mobileMenuOpen" @click="mobileMenuOpen = !mobileMenuOpen">
                 <span v-if="!mobileMenuOpen">☰</span>
                 <span v-else>✕</span>
             </button>

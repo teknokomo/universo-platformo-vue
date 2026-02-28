@@ -99,6 +99,10 @@ const handleBack = () => {
 const handleStartOver = () => {
     activeStep.value = 0
 }
+const handleImageError = (event: Event) => {
+    const img = event.target as HTMLElement
+    img.style.display = 'none'
+}
 </script>
 
 <template>
@@ -112,14 +116,14 @@ const handleStartOver = () => {
                 :class="{ active: index === activeStep, completed: index < activeStep }"
             >
                 <div class="step-circle">{{ index + 1 }}</div>
-                <span class="step-label">{{ step }}</span>
+                <span class="step-label">{{ t(`onboarding.steps.${step}`) }}</span>
             </div>
         </div>
 
         <!-- Error message -->
         <div v-if="error" class="error-alert" role="alert">
             <span>{{ error }}</span>
-            <button class="error-close" @click="error = null">✕</button>
+            <button class="error-close" :aria-label="t('onboarding.closeError')" @click="error = null">✕</button>
         </div>
 
         <!-- Step content -->
@@ -132,7 +136,7 @@ const handleStartOver = () => {
 
             <!-- Welcome step -->
             <template v-else-if="currentStep === 'welcome'">
-                <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" onerror="this.style.display='none'" />
+                <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" @error="handleImageError" />
                 <h2 class="step-title">{{ t('onboarding.welcome.title') }}</h2>
                 <p class="step-text">{{ t('onboarding.welcome.description') }}</p>
             </template>
@@ -196,7 +200,7 @@ const handleStartOver = () => {
 
             <!-- Completion step -->
             <template v-else-if="currentStep === 'completion'">
-                <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" onerror="this.style.display='none'" />
+                <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" @error="handleImageError" />
                 <h2 class="step-title">{{ t('onboarding.completion.title') }}</h2>
                 <p class="step-text">{{ t('onboarding.completion.description') }}</p>
                 <div class="completion-notice">

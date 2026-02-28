@@ -22,10 +22,16 @@
     },
     "nav": {
         "login": "Login",
-        "logout": "Logout"
+        "logout": "Logout",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu"
     },
     "auth": {
         "subtitle": "Sign in to your account",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you{'@'}example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
         "submit": "Sign in",
         "submitting": "Signing in\u2026",
         "validation": {
@@ -35,8 +41,16 @@
     },
     "onboarding": {
         "loading": "Loading\u2026",
+        "closeError": "Close error",
         "errorLoad": "Failed to load data. Please try again.",
         "errorSave": "Failed to save selection. Please try again.",
+        "steps": {
+            "welcome": "Welcome",
+            "projects": "Projects",
+            "campaigns": "Campaigns",
+            "clusters": "Clusters",
+            "completion": "Done"
+        },
         "nav": {
             "next": "Next",
             "back": "Back",

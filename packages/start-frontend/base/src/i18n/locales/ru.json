@@ -38,10 +38,16 @@
     },
     "nav": {
         "login": "Войти",
-        "logout": "Выйти"
+        "logout": "Выйти",
+        "openMenu": "Открыть меню",
+        "closeMenu": "Закрыть меню"
     },
     "auth": {
         "subtitle": "Войдите в свой аккаунт",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you{'@'}example.com",
+        "passwordLabel": "Пароль",
+        "passwordPlaceholder": "••••••••",
         "submit": "Войти",
         "submitting": "Входим\u2026",
         "validation": {
@@ -51,8 +57,16 @@
     },
     "onboarding": {
         "loading": "Загрузка\u2026",
+        "closeError": "Закрыть ошибку",
         "errorLoad": "Не удалось загрузить данные. Попробуйте ещё раз.",
         "errorSave": "Не удалось сохранить выбор. Попробуйте ещё раз.",
+        "steps": {
+            "welcome": "Начало",
+            "projects": "Проекты",
+            "campaigns": "Кампании",
+            "clusters": "Функции",
+            "completion": "Готово"
+        },
         "nav": {
             "next": "Далее",
             "back": "Назад",
