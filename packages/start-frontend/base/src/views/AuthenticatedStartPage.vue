@@ -8,7 +8,9 @@
 import { ref, onMounted } from 'vue'
 import OnboardingWizard from '../components/OnboardingWizard.vue'
 import StartFooter from '../components/StartFooter.vue'
-import { getOnboardingItems } from '../api/onboarding'
+import { useOnboardingApi } from '../composables/useOnboardingApi'
+
+const { getOnboardingItems } = useOnboardingApi()
 
 const isReady = ref(false)
 const onboardingCompleted = ref<boolean | null>(null)

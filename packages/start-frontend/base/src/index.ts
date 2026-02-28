@@ -4,6 +4,9 @@
  * Vue start page module - exports all public API.
  */
 
+// Composables
+export { useOnboardingApi } from './composables/useOnboardingApi'
+
 // Views
 export { default as StartPage } from './views/StartPage.vue'
 export { default as GuestStartPage } from './views/GuestStartPage.vue'

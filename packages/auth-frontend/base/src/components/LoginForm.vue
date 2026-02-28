@@ -10,7 +10,7 @@ const emit = defineEmits<{
     error: [message: string]
 }>()
 
-const { login, loading } = useAuth()
+const { login } = useAuth()
 
 const email = ref('')
 const password = ref('')

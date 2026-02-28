@@ -9,11 +9,13 @@
  * 4. Clusters (Platform Features) - select platform features
  * 5. Completion - final message
  */
-import { ref, onMounted } from 'vue'
-import { getOnboardingItems, joinItems } from '../api/onboarding'
-import type { OnboardingItem, OnboardingItems } from '../types'
+import { ref, computed, onMounted } from 'vue'
+import { useOnboardingApi } from '../composables/useOnboardingApi'
+import type { OnboardingItems } from '../types'
 
 const emit = defineEmits<{ complete: [] }>()
+
+const { getOnboardingItems, joinItems } = useOnboardingApi()
 
 type StepName = 'welcome' | 'projects' | 'campaigns' | 'clusters' | 'completion'
 const STEPS: StepName[] = ['welcome', 'projects', 'campaigns', 'clusters', 'completion']
@@ -27,6 +29,9 @@ const error = ref<string | null>(null)
 const selectedProjects = ref<string[]>([])
 const selectedCampaigns = ref<string[]>([])
 const selectedClusters = ref<string[]>([])
+
+/** Current step name as a computed property for reactive template bindings. */
+const currentStep = computed<StepName>(() => STEPS[activeStep.value])
 
 onMounted(async () => {
     try {
@@ -57,7 +62,7 @@ const toggleCampaign = (id: string) => (selectedCampaigns.value = toggleItem(sel
 const toggleCluster = (id: string) => (selectedClusters.value = toggleItem(selectedClusters.value, id))
 
 const handleNext = async () => {
-    const current = STEPS[activeStep.value]
+    const current = currentStep.value
 
     if (current === 'clusters') {
         try {
@@ -93,8 +98,6 @@ const handleBack = () => {
 const handleStartOver = () => {
     activeStep.value = 0
 }
-
-const currentStep = () => STEPS[activeStep.value]
 </script>
 
 <template>
@@ -127,7 +130,7 @@ const currentStep = () => STEPS[activeStep.value]
             </div>
 
             <!-- Welcome step -->
-            <template v-else-if="currentStep() === 'welcome'">
+            <template v-else-if="currentStep === 'welcome'">
                 <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" onerror="this.style.display='none'" />
                 <h2 class="step-title">Добро пожаловать!</h2>
                 <p class="step-text">
@@ -137,7 +140,7 @@ const currentStep = () => STEPS[activeStep.value]
             </template>
 
             <!-- Projects step -->
-            <template v-else-if="currentStep() === 'projects'">
+            <template v-else-if="currentStep === 'projects'">
                 <h2 class="step-title">Глобальные проекты</h2>
                 <p class="step-subtitle">Выберите глобальные цели, которые вас интересуют</p>
                 <div v-if="items?.projects.length" class="items-grid">
@@ -156,7 +159,7 @@ const currentStep = () => STEPS[activeStep.value]
             </template>
 
             <!-- Campaigns step -->
-            <template v-else-if="currentStep() === 'campaigns'">
+            <template v-else-if="currentStep === 'campaigns'">
                 <h2 class="step-title">Личные интересы</h2>
                 <p class="step-subtitle">Выберите кампании, соответствующие вашим интересам</p>
                 <div v-if="items?.campaigns.length" class="items-grid">
@@ -175,7 +178,7 @@ const currentStep = () => STEPS[activeStep.value]
             </template>
 
             <!-- Clusters step -->
-            <template v-else-if="currentStep() === 'clusters'">
+            <template v-else-if="currentStep === 'clusters'">
                 <h2 class="step-title">Функции платформы</h2>
                 <p class="step-subtitle">Выберите возможности платформы, которые вас интересуют</p>
                 <div v-if="items?.clusters.length" class="items-grid">
@@ -194,7 +197,7 @@ const currentStep = () => STEPS[activeStep.value]
             </template>
 
             <!-- Completion step -->
-            <template v-else-if="currentStep() === 'completion'">
+            <template v-else-if="currentStep === 'completion'">
                 <img src="/background-image.jpg" alt="Завершение" class="step-image" onerror="this.style.display='none'" />
                 <h2 class="step-title">Отлично! Вы готовы!</h2>
                 <p class="step-text">
@@ -221,12 +224,12 @@ const currentStep = () => STEPS[activeStep.value]
         <!-- Navigation buttons -->
         <div class="wizard-nav">
             <div>
-                <button v-if="activeStep > 0 && currentStep() !== 'completion'" class="btn btn-outline" :disabled="isSaving" @click="handleBack">
+                <button v-if="activeStep > 0 && currentStep !== 'completion'" class="btn btn-outline" :disabled="isSaving" @click="handleBack">
                     Назад
                 </button>
             </div>
             <div>
-                <button v-if="currentStep() === 'completion'" class="btn btn-primary" @click="handleStartOver">Начать заново</button>
+                <button v-if="currentStep === 'completion'" class="btn btn-primary" @click="handleStartOver">Начать заново</button>
                 <button v-else class="btn btn-primary" :disabled="isLoading || isSaving" @click="handleNext">
                     <span v-if="isSaving" class="spinner spinner-sm" />
                     <span v-else>Далее</span>
