@@ -21,6 +21,9 @@
 ## build
 **/dist
 **/build
+**/*.tsbuildinfo
+**/vite.config.js
+**/vite.config.d.ts
 
 ## temp
 **/tmp
