@@ -1,0 +1,98 @@
+{
+    "hero": {
+        "titlePrefix": "Discover",
+        "titleHighlight": "all worlds",
+        "description": "Universo Platformo — a universal platform connecting global projects, campaigns and communities.",
+        "button": "To the future"
+    },
+    "footer": {
+        "owner": "Telegram: {'@'}diverslaboristo",
+        "email": "info{'@'}universo.space",
+        "termsOfService": "Terms of Service",
+        "privacyPolicy": "Privacy Policy"
+    },
+    "testimonials": {
+        "title": "What users say",
+        "items": [
+            { "text": "Universo Platformo changed how I collaborate on global projects.", "author": "Alice K.", "role": "Researcher" },
+            { "text": "Finally a place where all my interests are in one place.", "author": "Bob M.", "role": "Activist" },
+            { "text": "The onboarding is smooth and the community is incredible.", "author": "Carlos R.", "role": "Developer" },
+            { "text": "A genuine digital ecosystem that scales to any need.", "author": "Diana S.", "role": "Designer" }
+        ]
+    },
+    "nav": {
+        "login": "Login",
+        "logout": "Logout",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu"
+    },
+    "auth": {
+        "subtitle": "Sign in to your account",
+        "emailLabel": "Email",
+        "emailPlaceholder": "you{'@'}example.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "submit": "Sign in",
+        "submitting": "Signing in\u2026",
+        "validation": {
+            "required": "Please enter email and password",
+            "loginFailed": "Login failed. Please check your credentials."
+        }
+    },
+    "onboarding": {
+        "loading": "Loading\u2026",
+        "closeError": "Close error",
+        "errorLoad": "Failed to load data. Please try again.",
+        "errorSave": "Failed to save selection. Please try again.",
+        "steps": {
+            "welcome": "Welcome",
+            "projects": "Projects",
+            "campaigns": "Campaigns",
+            "clusters": "Clusters",
+            "completion": "Done"
+        },
+        "nav": {
+            "next": "Next",
+            "back": "Back",
+            "startOver": "Start over"
+        },
+        "welcome": {
+            "title": "Welcome!",
+            "description": "Universo Platformo — a platform connecting global projects, campaigns and communities. Let us help you set up your personal experience."
+        },
+        "projects": {
+            "title": "Global Projects",
+            "subtitle": "Choose the global goals that interest you",
+            "empty": "Projects coming soon"
+        },
+        "campaigns": {
+            "title": "Personal Interests",
+            "subtitle": "Choose campaigns matching your interests",
+            "empty": "Campaigns coming soon"
+        },
+        "clusters": {
+            "title": "Platform Features",
+            "subtitle": "Choose platform capabilities that interest you",
+            "empty": "Features coming soon"
+        },
+        "completion": {
+            "title": "You are all set!",
+            "description": "Your preferences have been saved. We have set up a personalised experience for you on Universo Platformo.",
+            "noticeTitle": "Good to know:",
+            "noticeAlpha": "The platform is in alpha testing.",
+            "noticeGithub": "Follow updates on",
+            "noticeTelegram": "Join us on Telegram:",
+            "slogan": "All worlds are open!"
+        }
+    },
+    "completed": {
+        "title": "All done!",
+        "description": "Your settings have been saved. Welcome to Universo Platformo!",
+        "noticeTitle": "Good to know:",
+        "noticeAlpha": "The platform is in alpha testing.",
+        "noticeGithub": "Follow updates on",
+        "noticeTelegram": "Telegram:",
+        "slogan": "All worlds are open!",
+        "startOver": "Start over"
+    }
+}
