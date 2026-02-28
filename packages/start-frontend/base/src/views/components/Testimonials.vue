@@ -18,7 +18,7 @@ const items = tm('testimonials.items') as TestimonialItem[]
 <template>
     <section class="testimonials">
         <div class="testimonials-grid">
-            <div v-for="(item, index) in items" :key="index" class="testimonial-card">
+            <div v-for="item in items" :key="item.author" class="testimonial-card">
                 <p class="testimonial-text">"{{ item.text }}"</p>
                 <div class="testimonial-author">
                     <span class="author-name">{{ item.author }}</span>

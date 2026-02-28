@@ -6,9 +6,11 @@
  * After successful login the user is redirected to '/' via vue-router.
  */
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import LoginForm from '../components/LoginForm.vue'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const onSuccess = () => {
     router.push('/')
@@ -19,7 +21,7 @@ const onSuccess = () => {
     <div class="auth-page">
         <div class="auth-card">
             <h1 class="auth-title">Universo Platformo</h1>
-            <p class="auth-subtitle">Войдите в свой аккаунт</p>
+            <p class="auth-subtitle">{{ t('auth.subtitle') }}</p>
             <LoginForm @success="onSuccess" />
         </div>
     </div>

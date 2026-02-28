@@ -3,6 +3,7 @@
  * LoginForm - Email/password login form with error display.
  */
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuth } from '../composables/useAuth'
 
 const emit = defineEmits<{
@@ -11,6 +12,7 @@ const emit = defineEmits<{
 }>()
 
 const { login } = useAuth()
+const { t } = useI18n()
 
 const email = ref('')
 const password = ref('')
@@ -19,7 +21,7 @@ const isSubmitting = ref(false)
 
 const handleSubmit = async () => {
     if (!email.value || !password.value) {
-        errorMessage.value = 'Please enter email and password'
+        errorMessage.value = t('auth.validation.required')
         return
     }
 
@@ -30,7 +32,7 @@ const handleSubmit = async () => {
         await login(email.value, password.value)
         emit('success')
     } catch (err: any) {
-        const msg = err?.response?.data?.message ?? err?.message ?? 'Login failed'
+        const msg = err?.response?.data?.message ?? err?.message ?? t('auth.validation.loginFailed')
         errorMessage.value = msg
         emit('error', msg)
     } finally {
@@ -70,8 +72,8 @@ const handleSubmit = async () => {
         </p>
 
         <button type="submit" class="submit-btn" :disabled="isSubmitting">
-            <span v-if="isSubmitting">Входим…</span>
-            <span v-else>Войти</span>
+            <span v-if="isSubmitting">{{ t('auth.submitting') }}</span>
+            <span v-else>{{ t('auth.submit') }}</span>
         </button>
     </form>
 </template>

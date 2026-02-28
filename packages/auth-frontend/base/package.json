@@ -30,9 +30,11 @@
     "devDependencies": {
         "@types/node": "^20.0.0",
         "typescript": "^5.4.0",
+        "vue-i18n": "^9.13.0",
         "vue-tsc": "^2.0.0"
     },
     "peerDependencies": {
-        "vue": "^3.4.0"
+        "vue": "^3.4.0",
+        "vue-i18n": "^9.0.0"
     }
 }

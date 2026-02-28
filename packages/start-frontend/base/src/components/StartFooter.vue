@@ -6,33 +6,45 @@
  * - 'guest': white text with shadow (on dark background)
  * - 'internal': gray text (on light background)
  */
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+interface FooterItem {
+    id: string
+    icon: string
+    label: string
+    href: string
+    external: boolean
+}
 
 const props = withDefaults(defineProps<{ variant?: 'guest' | 'internal' }>(), { variant: 'guest' })
 
 const { t } = useI18n()
 
-const footerItems = [
-    { icon: '✈', text: () => t('footer.owner'), href: 'https://t.me/diverslaboristo', external: true },
-    { icon: '✉', text: () => `mailto:${t('footer.email')}`, href: () => `mailto:${t('footer.email')}`, external: true, label: () => t('footer.email') },
-    { icon: '📄', text: () => t('footer.termsOfService'), href: '/terms', external: false },
-    { icon: '🔒', text: () => t('footer.privacyPolicy'), href: '/privacy', external: false }
-]
+const footerItems = computed<FooterItem[]>(() => {
+    const email = t('footer.email')
+    return [
+        { id: 'telegram', icon: '✈', label: t('footer.owner'), href: 'https://t.me/diverslaboristo', external: true },
+        { id: 'email', icon: '✉', label: email, href: `mailto:${email}`, external: true },
+        { id: 'terms', icon: '📄', label: t('footer.termsOfService'), href: '/terms', external: false },
+        { id: 'privacy', icon: '🔒', label: t('footer.privacyPolicy'), href: '/privacy', external: false }
+    ]
+})
 </script>
 
 <template>
     <footer class="start-footer" :class="variant">
         <div class="footer-grid">
             <a
-                v-for="(item, index) in footerItems"
-                :key="index"
-                :href="typeof item.href === 'function' ? item.href() : item.href"
+                v-for="item in footerItems"
+                :key="item.id"
+                :href="item.href"
                 class="footer-item"
                 :target="item.external ? '_blank' : undefined"
                 :rel="item.external ? 'noopener noreferrer' : undefined"
             >
                 <span class="footer-icon">{{ item.icon }}</span>
-                <span class="footer-label">{{ item.label ? item.label() : item.text() }}</span>
+                <span class="footer-label">{{ item.label }}</span>
             </a>
         </div>
     </footer>

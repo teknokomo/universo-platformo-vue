@@ -39,5 +39,62 @@
     "nav": {
         "login": "Login",
         "logout": "Logout"
+    },
+    "auth": {
+        "subtitle": "Sign in to your account",
+        "submit": "Sign in",
+        "submitting": "Signing in\u2026",
+        "validation": {
+            "required": "Please enter email and password",
+            "loginFailed": "Login failed. Please check your credentials."
+        }
+    },
+    "onboarding": {
+        "loading": "Loading\u2026",
+        "errorLoad": "Failed to load data. Please try again.",
+        "errorSave": "Failed to save selection. Please try again.",
+        "nav": {
+            "next": "Next",
+            "back": "Back",
+            "startOver": "Start over"
+        },
+        "welcome": {
+            "title": "Welcome!",
+            "description": "Universo Platformo — a platform connecting global projects, campaigns and communities. Let us help you set up your personal experience."
+        },
+        "projects": {
+            "title": "Global Projects",
+            "subtitle": "Choose the global goals that interest you",
+            "empty": "Projects coming soon"
+        },
+        "campaigns": {
+            "title": "Personal Interests",
+            "subtitle": "Choose campaigns matching your interests",
+            "empty": "Campaigns coming soon"
+        },
+        "clusters": {
+            "title": "Platform Features",
+            "subtitle": "Choose platform capabilities that interest you",
+            "empty": "Features coming soon"
+        },
+        "completion": {
+            "title": "You are all set!",
+            "description": "Your preferences have been saved. We have set up a personalised experience for you on Universo Platformo.",
+            "noticeTitle": "Good to know:",
+            "noticeAlpha": "The platform is in alpha testing.",
+            "noticeGithub": "Follow updates on",
+            "noticeTelegram": "Join us on Telegram:",
+            "slogan": "All worlds are open!"
+        }
+    },
+    "completed": {
+        "title": "All done!",
+        "description": "Your settings have been saved. Welcome to Universo Platformo!",
+        "noticeTitle": "Good to know:",
+        "noticeAlpha": "The platform is in alpha testing.",
+        "noticeGithub": "Follow updates on",
+        "noticeTelegram": "Telegram:",
+        "slogan": "All worlds are open!",
+        "startOver": "Start over"
     }
 }

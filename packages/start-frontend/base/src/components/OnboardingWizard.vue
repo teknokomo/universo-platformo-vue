@@ -10,11 +10,13 @@
  * 5. Completion - final message
  */
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useOnboardingApi } from '../composables/useOnboardingApi'
 import type { OnboardingItems } from '../types'
 
 const emit = defineEmits<{ complete: [] }>()
 
+const { t } = useI18n()
 const { getOnboardingItems, joinItems } = useOnboardingApi()
 
 type StepName = 'welcome' | 'projects' | 'campaigns' | 'clusters' | 'completion'
@@ -45,7 +47,7 @@ onMounted(async () => {
         if (data.clusters.length > 0) selectedClusters.value = [data.clusters[0].id]
     } catch (err) {
         console.error('[OnboardingWizard] Failed to load items:', err)
-        error.value = 'Не удалось загрузить данные. Попробуйте ещё раз.'
+        error.value = t('onboarding.errorLoad')
     } finally {
         isLoading.value = false
     }
@@ -65,9 +67,9 @@ const handleNext = async () => {
     const current = currentStep.value
 
     if (current === 'clusters') {
+        isSaving.value = true
+        error.value = null
         try {
-            isSaving.value = true
-            error.value = null
             await joinItems({
                 projectIds: selectedProjects.value,
                 campaignIds: selectedCampaigns.value,
@@ -75,8 +77,7 @@ const handleNext = async () => {
             })
         } catch (err) {
             console.error('[OnboardingWizard] Failed to save:', err)
-            error.value = 'Не удалось сохранить выбор. Попробуйте ещё раз.'
-            isSaving.value = false
+            error.value = t('onboarding.errorSave')
             return
         } finally {
             isSaving.value = false
@@ -126,23 +127,20 @@ const handleStartOver = () => {
             <!-- Loading -->
             <div v-if="isLoading" class="loading-state">
                 <div class="spinner" />
-                <p>Загрузка…</p>
+                <p>{{ t('onboarding.loading') }}</p>
             </div>
 
             <!-- Welcome step -->
             <template v-else-if="currentStep === 'welcome'">
                 <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" onerror="this.style.display='none'" />
-                <h2 class="step-title">Добро пожаловать!</h2>
-                <p class="step-text">
-                    Universo Platformo — платформа, объединяющая глобальные проекты, кампании и сообщества. Давайте поможем вам настроить
-                    персональный опыт.
-                </p>
+                <h2 class="step-title">{{ t('onboarding.welcome.title') }}</h2>
+                <p class="step-text">{{ t('onboarding.welcome.description') }}</p>
             </template>
 
             <!-- Projects step -->
             <template v-else-if="currentStep === 'projects'">
-                <h2 class="step-title">Глобальные проекты</h2>
-                <p class="step-subtitle">Выберите глобальные цели, которые вас интересуют</p>
+                <h2 class="step-title">{{ t('onboarding.projects.title') }}</h2>
+                <p class="step-subtitle">{{ t('onboarding.projects.subtitle') }}</p>
                 <div v-if="items?.projects.length" class="items-grid">
                     <button
                         v-for="item in items.projects"
@@ -155,13 +153,13 @@ const handleStartOver = () => {
                         <p v-if="item.description" class="item-desc">{{ item.description }}</p>
                     </button>
                 </div>
-                <p v-else class="empty-state">Проекты скоро появятся</p>
+                <p v-else class="empty-state">{{ t('onboarding.projects.empty') }}</p>
             </template>
 
             <!-- Campaigns step -->
             <template v-else-if="currentStep === 'campaigns'">
-                <h2 class="step-title">Личные интересы</h2>
-                <p class="step-subtitle">Выберите кампании, соответствующие вашим интересам</p>
+                <h2 class="step-title">{{ t('onboarding.campaigns.title') }}</h2>
+                <p class="step-subtitle">{{ t('onboarding.campaigns.subtitle') }}</p>
                 <div v-if="items?.campaigns.length" class="items-grid">
                     <button
                         v-for="item in items.campaigns"
@@ -174,13 +172,13 @@ const handleStartOver = () => {
                         <p v-if="item.description" class="item-desc">{{ item.description }}</p>
                     </button>
                 </div>
-                <p v-else class="empty-state">Кампании скоро появятся</p>
+                <p v-else class="empty-state">{{ t('onboarding.campaigns.empty') }}</p>
             </template>
 
             <!-- Clusters step -->
             <template v-else-if="currentStep === 'clusters'">
-                <h2 class="step-title">Функции платформы</h2>
-                <p class="step-subtitle">Выберите возможности платформы, которые вас интересуют</p>
+                <h2 class="step-title">{{ t('onboarding.clusters.title') }}</h2>
+                <p class="step-subtitle">{{ t('onboarding.clusters.subtitle') }}</p>
                 <div v-if="items?.clusters.length" class="items-grid">
                     <button
                         v-for="item in items.clusters"
@@ -193,31 +191,29 @@ const handleStartOver = () => {
                         <p v-if="item.description" class="item-desc">{{ item.description }}</p>
                     </button>
                 </div>
-                <p v-else class="empty-state">Функции скоро появятся</p>
+                <p v-else class="empty-state">{{ t('onboarding.clusters.empty') }}</p>
             </template>
 
             <!-- Completion step -->
             <template v-else-if="currentStep === 'completion'">
-                <img src="/background-image.jpg" alt="Завершение" class="step-image" onerror="this.style.display='none'" />
-                <h2 class="step-title">Отлично! Вы готовы!</h2>
-                <p class="step-text">
-                    Ваши предпочтения сохранены. Мы подобрали для вас персонализированный опыт на платформе Universo Platformo.
-                </p>
+                <img src="/background-image.jpg" alt="Universo Platformo" class="step-image" onerror="this.style.display='none'" />
+                <h2 class="step-title">{{ t('onboarding.completion.title') }}</h2>
+                <p class="step-text">{{ t('onboarding.completion.description') }}</p>
                 <div class="completion-notice">
-                    <p class="notice-title">Важно знать:</p>
+                    <p class="notice-title">{{ t('onboarding.completion.noticeTitle') }}</p>
                     <ul class="notice-list">
-                        <li>Платформа находится в стадии альфа-тестирования.</li>
+                        <li>{{ t('onboarding.completion.noticeAlpha') }}</li>
                         <li>
-                            Следите за обновлениями на
-                            <a href="https://github.com/teknokomo/universo-platformo-react" target="_blank" rel="noopener">GitHub</a>.
+                            {{ t('onboarding.completion.noticeGithub') }}
+                            <a href="https://github.com/teknokomo/universo-platformo-react" target="_blank" rel="noopener noreferrer">GitHub</a>.
                         </li>
                         <li>
-                            Присоединяйтесь в Telegram:
-                            <a href="https://t.me/universo_pro" target="_blank" rel="noopener">@universo_pro</a>.
+                            {{ t('onboarding.completion.noticeTelegram') }}
+                            <a href="https://t.me/universo_pro" target="_blank" rel="noopener noreferrer">@universo_pro</a>.
                         </li>
                     </ul>
                 </div>
-                <p class="slogan">Все миры открыты!</p>
+                <p class="slogan">{{ t('onboarding.completion.slogan') }}</p>
             </template>
         </div>
 
@@ -225,14 +221,16 @@ const handleStartOver = () => {
         <div class="wizard-nav">
             <div>
                 <button v-if="activeStep > 0 && currentStep !== 'completion'" class="btn btn-outline" :disabled="isSaving" @click="handleBack">
-                    Назад
+                    {{ t('onboarding.nav.back') }}
                 </button>
             </div>
             <div>
-                <button v-if="currentStep === 'completion'" class="btn btn-primary" @click="handleStartOver">Начать заново</button>
+                <button v-if="currentStep === 'completion'" class="btn btn-primary" @click="handleStartOver">
+                    {{ t('onboarding.nav.startOver') }}
+                </button>
                 <button v-else class="btn btn-primary" :disabled="isLoading || isSaving" @click="handleNext">
                     <span v-if="isSaving" class="spinner spinner-sm" />
-                    <span v-else>Далее</span>
+                    <span v-else>{{ t('onboarding.nav.next') }}</span>
                 </button>
             </div>
         </div>

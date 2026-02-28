@@ -6,11 +6,13 @@
  * Otherwise shows the multi-step onboarding wizard.
  */
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import OnboardingWizard from '../components/OnboardingWizard.vue'
 import StartFooter from '../components/StartFooter.vue'
 import { useOnboardingApi } from '../composables/useOnboardingApi'
 
 const { getOnboardingItems } = useOnboardingApi()
+const { t } = useI18n()
 
 const isReady = ref(false)
 const onboardingCompleted = ref<boolean | null>(null)
@@ -47,24 +49,24 @@ const handleStartOver = () => {
             <div class="page-content">
                 <div class="completion-card">
                     <img src="/background-image.jpg" alt="Universo Platformo" class="completion-image" onerror="this.style.display='none'" />
-                    <h2 class="completion-title">Всё готово!</h2>
-                    <p class="completion-text">Ваши настройки сохранены. Добро пожаловать в Universo Platformo!</p>
+                    <h2 class="completion-title">{{ t('completed.title') }}</h2>
+                    <p class="completion-text">{{ t('completed.description') }}</p>
                     <div class="completion-notice">
-                        <p class="notice-title">Важно знать:</p>
+                        <p class="notice-title">{{ t('completed.noticeTitle') }}</p>
                         <ul class="notice-list">
-                            <li>Платформа находится в стадии альфа-тестирования.</li>
+                            <li>{{ t('completed.noticeAlpha') }}</li>
                             <li>
-                                Следите за обновлениями на
-                                <a href="https://github.com/teknokomo/universo-platformo-react" target="_blank" rel="noopener">GitHub</a>.
+                                {{ t('completed.noticeGithub') }}
+                                <a href="https://github.com/teknokomo/universo-platformo-react" target="_blank" rel="noopener noreferrer">GitHub</a>.
                             </li>
                             <li>
-                                Telegram:
-                                <a href="https://t.me/universo_pro" target="_blank" rel="noopener">@universo_pro</a>.
+                                {{ t('completed.noticeTelegram') }}
+                                <a href="https://t.me/universo_pro" target="_blank" rel="noopener noreferrer">@universo_pro</a>.
                             </li>
                         </ul>
                     </div>
-                    <p class="slogan">Все миры открыты!</p>
-                    <button class="btn-restart" @click="handleStartOver">Пройти заново</button>
+                    <p class="slogan">{{ t('completed.slogan') }}</p>
+                    <button class="btn-restart" @click="handleStartOver">{{ t('completed.startOver') }}</button>
                 </div>
             </div>
         </template>
